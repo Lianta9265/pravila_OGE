@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Узнай правило! — тренажёр</title>
+<style>
+:root{--bg:#211a33;--panel:#2b2243;--cream:#fffaf0;--turq:#65e3d6;--gold:#ffcb72;--coral:#ff8c87;--light:#f9f2e4;--muted:#d5cde2;--green:#88e4b2}
+*{box-sizing:border-box}
+body{margin:0;font-family:Trebuchet MS,Arial,sans-serif;color:var(--cream);min-height:100vh;background:radial-gradient(circle at 10% 8%,#3a3661 0,transparent 27%),radial-gradient(circle at 94% 10%,#184b58 0,transparent 35%),linear-gradient(145deg,#20192e,#29203b 60%,#1e3442)}
+button{font:inherit;cursor:pointer}
+.app{max-width:1220px;margin:0 auto;padding:28px 24px 48px}
+.top{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:24px}
+.brand{display:flex;align-items:center;gap:13px}.symbol{display:grid;place-items:center;width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,#74f6e1,#e9c36c);color:#251b36;font-size:27px;font-weight:900;box-shadow:0 6px 0 #113d4a}
+.brand h1{font-size:clamp(24px,3vw,32px);margin:0;line-height:1.15;color:#fdf1da}.brand small{display:block;color:#d8cce4;font-size:15px;margin-top:4px}
+.controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
+.btn{border:2px solid #6fdad1;border-radius:16px;background:#3a2c52;color:white;padding:12px 17px;font-weight:800;transition:transform .13s,background .13s;min-height:48px}
+.btn:hover:not(:disabled){transform:translateY(-2px);background:#463a5f}.btn:focus-visible,.choice:focus-visible{outline:4px solid var(--gold);outline-offset:4px}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.primary{color:#1d2438;background:linear-gradient(140deg,#87f4df,#6adacb);border-color:#b5fff0}.btn.gold{color:#2b2331;background:var(--gold);border-color:#f9da99}.btn.ghost{border-color:#8d7ba3;background:transparent}
+.intro{background:linear-gradient(110deg,rgba(45,95,96,.38),rgba(71,49,91,.8));padding:25px 30px;border:1.5px solid #7a8a9f;border-radius:26px;box-shadow:0 12px 40px rgba(5,5,17,.18)}
+.eyebrow{font-size:15px;font-weight:800;letter-spacing:.07em;color:#ffcf7a;text-transform:uppercase}.question{font-size:clamp(23px,3.2vw,36px);line-height:1.25;margin:11px 0 14px;max-width:1040px}.instruction{font-size:17px;color:#e5ddf0;margin:0}.toolrow{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;margin:20px 0 12px}.counter{color:#eadff8;font-size:17px;font-weight:700}.hint{color:#c6edec;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;align-items:stretch;padding:15px 3px 22px}
+.choice{position:relative;appearance:none;text-align:left;display:flex;align-items:center;gap:13px;min-height:102px;padding:18px 15px;border:3px solid #8d85a4;border-radius:20px;background:#342a4c;color:#fff8ea;box-shadow:0 7px 0 rgba(7,6,20,.26);font-size:clamp(16px,1.7vw,19px);line-height:1.29;font-weight:700;transform:rotate(var(--rot,0deg));transition:transform .15s,background .15s,border-color .15s}
+.choice:nth-child(7n+1){--rot:-.65deg}.choice:nth-child(7n+2){--rot:.55deg}.choice:nth-child(7n+3){--rot:-.35deg}.choice:nth-child(7n+4){--rot:.75deg}.choice:nth-child(7n+5){--rot:-.5deg}.choice:nth-child(7n+6){--rot:.3deg}
+.choice:hover:not(:disabled){transform:rotate(0) translateY(-3px);border-color:var(--gold)}
+.choice .mark{flex-shrink:0;width:30px;height:30px;border:2px solid #c8bed5;border-radius:10px;display:grid;place-items:center;color:#132d38;font-weight:900;background:rgba(255,255,255,.04)}
+.choice.selected{background:linear-gradient(135deg,#215c67,#344962);border-color:var(--turq)}.choice.selected .mark{background:var(--turq);border-color:var(--turq)}
+.choice.correct{border-color:var(--green);background:#205447}.choice.correct .mark{background:var(--green);border-color:var(--green)}
+.choice.wrong{border-color:var(--coral);background:#612c49}.choice.wrong .mark{background:var(--coral);border-color:var(--coral)}
+.choice.missed{border-color:var(--gold);background:#55422d}.choice.missed .mark{border-color:var(--gold);color:var(--gold)}
+.choice .choice-copy{display:flex;flex-direction:column;gap:7px}
+.choice .emph-always{font-size:1.32em;font-weight:900;letter-spacing:.045em;color:#ffdf8a;text-shadow:0 1px 0 #231830;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}.choice .verdict{font-size:13px;line-height:1.2;letter-spacing:.03em;text-transform:uppercase;font-weight:900;color:#b8f5d9}.choice.wrong .verdict{color:#ffd0ce}.choice.missed .verdict{color:#ffe1a2}
+.result-banner{display:none;margin-top:16px;padding:15px 20px;border-radius:18px;border:2px solid var(--green);background:#204b42;color:#e7fff6;font-size:20px;font-weight:900;line-height:1.35;box-shadow:0 6px 0 rgba(10,10,20,.15)}.result-banner.visible{display:block}.result-banner.needs-work{background:#563b38;border-color:var(--gold);color:#fff1d3}.result-banner .detail{display:block;font-size:15px;font-weight:600;margin-top:5px;color:#f1f0e9}
+.actions{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;margin:3px 0 13px}.actions .btn{min-width:180px}
+.feedback{display:none;margin-top:18px;border:2px solid #bca4de;border-radius:22px;padding:21px 24px;background:#322846}.feedback.visible{display:block}.feedback h3{font-size:24px;margin:0 0 8px}.feedback p{font-size:17px;line-height:1.5;margin:8px 0}.feedback ul{margin:12px 0 0;padding-left:23px}.feedback li{margin:10px 0;line-height:1.44}
+.rule{display:none;margin:20px 0;border:2px solid #efbf71;border-radius:22px;background:#312943;padding:20px 25px}.rule.visible{display:block}.rule h3{margin:0 0 10px;color:#ffdb93;font-size:23px}.rule p,.rule li{font-size:18px;line-height:1.5}.rule li{margin:5px 0}.rule .examples{border-left:4px solid #65e3d6;padding-left:16px;margin-top:16px;color:#d9fff5}
+.foot{display:flex;gap:15px;flex-wrap:wrap;justify-content:space-between;align-items:center;border-top:1px solid #766d8b;margin-top:27px;padding-top:15px;color:#cfc5df;font-size:14px}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.app{padding:20px 14px 35px}.intro{padding:22px 19px}}
+@media(max-width:580px){.grid{grid-template-columns:1fr;gap:12px}.choice{min-height:76px;font-size:18px}.controls{width:100%}.controls .btn{flex:1}.intro{border-radius:19px}.choice:nth-child(n){transform:none}.brand h1{font-size:25px}.actions .btn{flex:1}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.slide-nav{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:0 0 15px;padding:12px 16px;border:1.5px solid #65587f;border-radius:18px;background:rgba(37,28,57,.72)}
+.slide-nav .nav-label{font-size:15px;font-weight:800;color:#ffe2a3}
+.slide-nav select{min-width:270px;flex:1;max-width:550px;border:2px solid #72e3d5;background:#322849;color:#fff8ea;border-radius:13px;padding:12px 13px;font:700 17px Trebuchet MS,Arial,sans-serif}
+.slide-nav .nav-btn{border-radius:13px;min-width:50px;padding:10px 14px;min-height:46px}
+.choice .emph-case{font-size:1.12em;font-weight:900;color:#ffdb91}
+@media(max-width:580px){.slide-nav select{min-width:100%;order:-1}.slide-nav .nav-label{display:none}.slide-nav .nav-btn{flex:1}}
+
+.grid.compact{grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+.grid.compact .choice{min-height:88px;font-size:15px;padding:12px 10px;border-radius:15px;gap:9px;align-items:flex-start;flex-direction:column}
+.choice .contextline{font-size:12px;line-height:1.35;color:#d4ccdf;font-weight:500;margin-top:5px}
+.choice .sourceline{font-size:11px;color:#b4e9e4;margin-top:4px;font-weight:500}
+.draft-editor{margin-top:17px;padding:19px;background:#332846;border:1.5px solid #b99bd5;border-radius:21px}
+.draft-editor h3{margin:0 0 7px;font-size:22px;color:#ffcf81}.draft-editor p{line-height:1.44;color:#e9dbf2;margin:7px 0 16px}
+.draft-slots{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.slot{border:2px dashed #e9c578;border-radius:16px;background:#473951;padding:10px;min-width:0}
+.slot label{display:block;font-weight:800;font-size:12px;color:#ffdc96;margin-bottom:7px}
+.slot textarea{resize:vertical;width:100%;min-height:78px;font:700 15px Trebuchet MS,Arial,sans-serif;background:#2b253b;color:#fff9f0;border:1px solid #aa94b6;border-radius:9px;padding:9px}
+.editor-actions{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;align-items:center}.editor-actions .hint{flex:1}
+.draft-gallery-title{font-weight:800;color:#fbdda8;margin-top:12px}
+.draft-gallery .false-card{background:#352f4d;border:2px solid #867ba1;border-radius:16px;padding:11px;min-width:0}
+.draft-gallery .false-title{font-size:16px;font-weight:900;color:#fff7e6;line-height:1.23}
+.draft-gallery .false-context{font-size:12px;line-height:1.35;margin:7px 0;color:#d8d3e6}
+.draft-gallery a{font-size:12px;color:#9be5dd;overflow-wrap:anywhere}
+.draft-gallery .hint-small{font-size:12px;color:#e1b99f;display:block;margin-top:6px}
+@media(max-width:980px){.draft-slots{grid-template-columns:repeat(3,minmax(0,1fr))}.grid.compact{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:620px){.draft-slots{grid-template-columns:1fr 1fr}.grid.compact{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.grid.compact{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.grid.compact .choice{font-size:16px;min-height:92px;padding:12px 12px;align-items:flex-start;gap:11px;flex-direction:row}
+.grid.compact .choice .mark{width:26px;height:26px;border-radius:8px;margin-top:2px}
+.grid.compact .choice .choice-copy{flex:1;min-width:0;gap:5px}
+.grid.compact .choice .contextline{font-size:16px;line-height:1.42;color:#fff7ed;font-weight:600;margin-top:0}
+.grid.compact .choice .sourceline{margin-top:5px}
+.grid.compact .choice .verdict{font-size:12px}
+.proposed-mark{display:inline;background:#f9c86d;color:#211a2d;border-radius:4px;padding:1px 3px;font-weight:900;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.draft-gallery .false-card{min-height:145px;background:#352c4a;padding:14px}
+.draft-gallery .false-title{font-size:15px}
+.draft-gallery .false-context{font-size:14px;line-height:1.46;color:#fff7e8}
+.draft-gallery .false-card details{margin-top:9px;font-size:12px;color:#c2f8ed}
+.draft-gallery .false-card summary{cursor:pointer}
+.draft-gallery .false-card details p{color:#f6e9f8;line-height:1.4}
+.slot .base-field{width:100%;margin-top:7px;background:#2b253b;color:#fff9f0;border:1px solid #aa94b6;border-radius:9px;padding:9px;font:700 14px Trebuchet MS,Arial,sans-serif}
+.slot .base-field-label{display:block;font-weight:700;font-size:11px;color:#ffdfab;margin-top:8px}
+@media(max-width:1000px){.grid.compact{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){.grid.compact{grid-template-columns:1fr}.draft-slots{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand"><div class="symbol">?</div><div><h1>Узнай правило!</h1><small>Тренажёр повторения • ОГЭ / ЕГЭ</small></div></div>
+    <div class="controls"><button id="ruleBtn" class="btn" type="button">Правило</button><button id="exportBtn" class="btn ghost" type="button">Сохранить прогресс</button><button id="importBtn" class="btn ghost" type="button">Загрузить прогресс</button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
+  </header>
+  <main>
+    <nav class="slide-nav" aria-label="Переключение правил"><span class="nav-label">Выбери правило:</span><button id="prevBtn" class="btn ghost nav-btn" type="button" aria-label="Предыдущее правило">←</button><select id="slideSelect" aria-label="Выбрать слайд с правилом"></select><button id="nextBtn" class="btn ghost nav-btn" type="button" aria-label="Следующее правило">→</button></nav>
+    <section class="intro" aria-labelledby="question"><div id="index" class="eyebrow">Слайд 01 · Синтаксис</div><h2 id="question" class="question"></h2><p class="instruction">Нажми на все верные утверждения. Ложные оставь без отметки. Количество правильных ответов не сообщается.</p></section><div id="resultBanner" class="result-banner" role="status" aria-live="polite"></div>
+    <div class="toolrow"><div id="count" class="counter" aria-live="polite">Выбрано: 0</div><div id="stat" class="hint"></div></div>
+    <section id="cards" class="grid" aria-label="Утверждения для выбора"></section>
+    <div class="actions"><button id="checkBtn" class="btn primary" type="button" disabled>Проверить ответы</button><button id="clearBtn" class="btn ghost" type="button">Снять выделение</button><button id="againBtn" class="btn gold" type="button">Новый вариант</button></div>
+    <section id="feedback" class="feedback" aria-live="polite"></section>
+    <section id="rulePanel" class="rule"></section>
+  </main>
+  <footer class="foot"><span>Результаты хранятся в этом браузере. Кнопка «Сохранить прогресс» создаёт резервный файл.</span><span>Версия 14 • 5 слайдов · пятый по ОБЗ ФИПИ</span></footer>
+</div>
+<script>
+'use strict';
+const SLIDES = [{
+  id:'homogeneous-members', title:'Однородные члены предложения',
+  question:'Какие утверждения об однородных членах предложения верны?',
+  positives:[
+    {id:'p1',t:'Отвечают на один и тот же вопрос',e:'К однородным членам ставится общий вопрос.'},
+    {id:'p2',t:'Относятся к одному и тому же слову',e:'Их связывает общее слово, с которым они находятся в одинаковых отношениях.'},
+    {id:'p3',t:'Выполняют одинаковую синтаксическую функцию',e:'Это один и тот же член предложения: например, несколько подлежащих или несколько обстоятельств.'},
+    {id:'p4',t:'Могут соединяться сочинительными союзами или без союзов',e:'Связь между однородными членами — сочинительная; союз может отсутствовать.'},
+    {id:'p5',t:'Произносятся с интонацией перечисления, сопоставления или противопоставления',e:'Интонация помогает услышать объединение однородных членов.'},
+    {id:'p6',t:'Перед одиночным союзом И, ИЛИ, ЛИБО или ДА (= И), соединяющим однородные члены, запятая не ставится',e:'Одиночный соединительный или разделительный союз между однородными членами не требует запятой: «яблоки и груши», «чай или кофе».'}
+  ],
+  negatives:[
+    {id:'n1',t:'Между ними подчинительная связь',e:'Между самими однородными членами связь сочинительная, не подчинительная.'},
+    {id:'n2',t:'Обязательно находятся в именительном падеже',e:'Однородными могут быть и дополнения, и обстоятельства, и другие члены предложения.'},
+    {id:'n3',t:'Обязательно стоят в одном падеже',e:'Падеж не является универсальным признаком однородности: члены могут быть выражены разными частями речи.'},
+    {id:'n4',t:'Всегда относятся к одной части речи',e:'Однородные члены могут быть выражены разными частями речи: «говорил громко и с волнением».'},
+    {id:'n5',t:'Всегда являются подлежащими',e:'Однородными могут быть также сказуемые и второстепенные члены.'},
+    {id:'n6',t:'Всегда являются сказуемыми',e:'Однородными могут быть также подлежащие и второстепенные члены.'},
+    {id:'n7',t:'Относятся к одному склонению',e:'Склонение не определяет однородность; однородными могут быть даже не существительные.'},
+    {id:'n8',t:'Относятся к одному спряжению',e:'Спряжение не определяет однородность; однородные члены необязательно глаголы.'},
+    {id:'n9',t:'Между ними ВСЕГДА ставится запятая',e:'Нет: «Купили яблоки и груши». Перед одиночными союзами И, ИЛИ, ЛИБО, ДА (= И) между однородными членами запятая не ставится.'},
+    {id:'n10',t:'Всегда соединяются союзом И',e:'Сочинительные союзы бывают разными; однородные члены могут соединяться и без союзов.'},
+    {id:'n11',t:'В предложении их обязательно три или больше',e:'Двух однородных членов уже достаточно.'},
+    {id:'n12',t:'Должны стоять непосредственно друг за другом',e:'Однородные члены могут быть разделены другими словами.'},
+    {id:'n13',t:'Встречаются только в простых предложениях',e:'Внутри частей сложного предложения тоже бывают однородные члены.'},
+    {id:'n14',t:'Не могут иметь зависимых слов',e:'Однородные члены могут быть распространёнными: иметь при себе зависимые слова.'},
+    {id:'n15',t:'Всегда обозначают предметы',e:'Они могут обозначать действия, признаки и обстоятельства.'},
+    {id:'n16',t:'Отвечают на разные вопросы',e:'Один из характерных признаков — один и тот же вопрос.'},
+    {id:'n17',t:'Обязательно выражены существительными',e:'Однородные члены могут быть выражены глаголами, прилагательными, наречиями и сочетаниями слов.'},
+    {id:'n18',t:'Обязательно имеют одинаковые окончания',e:'Окончания не являются критерием однородности.'},
+    {id:'n19',t:'Всегда стоят в одном числе',e:'Грамматическое число не является обязательным общим признаком.'},
+    {id:'n20',t:'Всегда стоят в одном роде',e:'Грамматический род не является обязательным общим признаком.'},
+    {id:'n21',t:'Не могут быть второстепенными членами предложения',e:'Однородными бывают дополнения, определения и обстоятельства.'},
+    {id:'n22',t:'Не могут быть главными членами предложения',e:'Однородными бывают подлежащие и сказуемые.'},
+    {id:'n23',t:'Всегда находятся перед словом, к которому относятся',e:'Положение в предложении не определяет однородность.'},
+    {id:'n24',t:'Обязательно разделены запятой и перед одиночным И',e:'Перед одиночным союзом «и», соединяющим два однородных члена, запятую обычно не ставят.'}
+  ]
+},
+{
+  id:'subject', title:'Подлежащее', category:'Синтаксис',
+  question:'Какие утверждения о подлежащем верны?',
+  mandatoryNegativeIds:['case-dative','case-instrumental','case-prepositional','case-accusative','case-genitive'],
+  falsePerAttempt:12,
+  positives:[
+    {id:'p1',t:'ВСЕГДА в именительном падеже',e:'Главный школьный ориентир: вопросы КТО? ЧТО? Например: «Ребята играют» — кто? ребята; «Дерущиеся были наказаны» — кто? дерущиеся. Неизменяемые слова и инфинитивы могут быть подлежащими, но грамматического падежа не имеют.'},
+    {id:'p2',t:'Отвечает на вопросы КТО? ЧТО?',e:'Основные вопросы для поиска подлежащего: кто? что? Например: «Птицы улетели» — кто? птицы. Иногда подлежащее выражено инфинитивом: «Читать полезно».'},
+    {id:'p3',t:'Может быть выражено сочетанием количественного слова с существительным',e:'«Пять учеников пришли». Подлежащее — сочетание «пять учеников». Главное слово «пять» стоит в именительном падеже.'},
+    {id:'p4',t:'Может быть выражено сочетанием со значением избирательности: ОДИН ИЗ группы',e:'«Один из ребят ответил». Подлежащее — сочетание «один из ребят»: выбран один представитель группы.'},
+    {id:'p5',t:'Может быть выражено сочетанием со значением совместности: КТО-ТО С КЕМ-ТО',e:'«Брат с сестрой пришли». Оба участвуют в действии — подлежащее «брат с сестрой». Сравни: «Брат с сестрой пришёл» — подлежащее только «брат».'},
+    {id:'p6',t:'В предложении могут быть однородные подлежащие',e:'«Листья и ветки шуршали». Два подлежащих: «листья» и «ветки».'}
+  ],
+  negatives:[
+    {id:'n1',t:'Может быть выражено ТОЛЬКО существительным',e:'Подлежащим бывают местоимение, инфинитив и синтаксически цельное сочетание: «Она пришла», «Учиться полезно», «Пять ребят играли».'},
+    {id:'n2',t:'Любое существительное с определением целиком является подлежащим',e:'«Высокая берёза росла». Подлежащее — «берёза», а «высокая» — определение. Особый случай — неделимые названия, например «Красная площадь».'},
+    {id:'n3',t:'Может стоять в ЛЮБОМ падеже',e:'Обычное подлежащее, выраженное существительным или местоимением, стоит в именительном падеже. Косвенные падежи могут встречаться ВНУТРИ цельного подлежащего: «пять учеников», «брат с сестрой».'},
+    {id:'case-dative',t:'Отвечает на вопросы КОМУ? ЧЕМУ?',e:'Это вопросы дательного падежа: «помог другу» (кому?). Слово «другу» — дополнение, не подлежащее.'},
+    {id:'case-instrumental',t:'Отвечает на вопросы КЕМ? ЧЕМ?',e:'Это вопросы творительного падежа: «горжусь другом» (кем?). «Другом» — дополнение. В сочетании «брат с сестрой» «сестрой» — часть цельного подлежащего при совместном действии.'},
+    {id:'case-prepositional',t:'Отвечает на вопросы О КОМ? О ЧЁМ?',e:'Это вопросы предложного падежа: «рассказывал о брате». Существительное с предлогом здесь не является подлежащим.'},
+    {id:'case-accusative',t:'Отвечает на вопросы КОГО? ЧТО?',e:'Так обозначают винительный падеж: «вижу книгу» (что?). Вопрос «что?» совпадает по звучанию с именительным, поэтому нужно смотреть на смысл и грамматическую связь: «Книга лежит» — подлежащее; «Читаю книгу» — дополнение.'},
+    {id:'case-genitive',t:'Отвечает на вопросы КОГО? ЧЕГО?',e:'Это вопросы родительного падежа: «нет друга» (кого?), «край леса» (чего?). Подлежащее ищем по вопросу кто? что?.'},
+    {id:'n4',t:'В предложении может быть ТОЛЬКО ОДНО подлежащее',e:'Подлежащих может быть несколько, если они однородные: «Маша и Петя пришли».'},
+    {id:'n5',t:'Подлежащее ВСЕГДА состоит из одного слова',e:'Подлежащее может быть цельным сочетанием: «три товарища», «один из нас», «мама с папой» (при совместном действии).'},
+    {id:'n6',t:'Подлежащее ВСЕГДА стоит в начале предложения',e:'«Во дворе растёт берёза». Подлежащее «берёза» стоит в конце.'},
+    {id:'n7',t:'Подлежащее НЕ МОЖЕТ быть выражено местоимением',e:'«Она поёт». «Она» — подлежащее, выраженное личным местоимением.'},
+    {id:'n8',t:'Подлежащее обозначает только живое существо',e:'«Снег идёт». «Снег» — подлежащее, хотя не обозначает живое существо.'},
+    {id:'n9',t:'Отвечает на вопросы ЧТО ДЕЛАЕТ? ЧТО СДЕЛАЕТ?',e:'Это вопросы сказуемого: «Мальчик играет» — кто? мальчик (подлежащее), что делает? играет (сказуемое).'},
+    {id:'n10',t:'Существительное после предлога С ВСЕГДА входит в подлежащее',e:'Сравни «Брат с сестрой пришли» и «Брат с сестрой пришёл». Во втором случае «с сестрой» не входит в подлежащее.'},
+    {id:'n11',t:'Сказуемое ВСЕГДА стоит сразу после подлежащего',e:'«Старый дом у реки давно пустовал». Между подлежащим «дом» и сказуемым «пустовал» есть другие слова.'},
+    {id:'n12',t:'Подлежащим может быть только числительное',e:'Подлежащее может быть существительным, местоимением, инфинитивом и сочетанием слов.'},
+    {id:'n13',t:'Подлежащее может быть только в единственном числе',e:'«Птицы улетели». Подлежащее «птицы» во множественном числе.'},
+    {id:'n14',t:'Подлежащее обязательно выражено существительным мужского рода',e:'«Мама улыбнулась», «Солнце сияет», «Они пришли» — род и часть речи могут быть разными.'},
+    {id:'n15',t:'Два существительных в предложении — значит, два подлежащих',e:'«Мальчик читает книгу». Подлежащее — «мальчик», «книгу» — дополнение.'},
+    {id:'n16',t:'Сочетание «один из ребят» НИКОГДА не бывает подлежащим',e:'«Один из ребят ответил». Всё сочетание обозначает выбранного представителя группы и может быть подлежащим.'},
+    {id:'n17',t:'Подлежащее подчёркивают двумя чертами',e:'Подлежащее подчёркивают одной чертой, сказуемое — двумя.'},
+    {id:'n18',t:'В предложении с однородными подлежащими обязательно два сказуемых',e:'«Роза и лилия распустились». Два подлежащих и одно сказуемое.'}
+  ]
+},
+{
+  "id": "case-traps",
+  "title": "Именительный или винительный?",
+  "category": "Практика · ОГЭ, задание 2",
+  "question": "Верно ли выделена грамматическая основа? Выбери все ВЕРНЫЕ варианты.",
+  "positives": [
+    {
+      "id": "right01",
+      "t": "которое называется кузнечиком",
+      "context": "Это трель насекомого, которое называется кузнечиком.",
+      "highlight": [
+        "которое",
+        "называется",
+        "кузнечиком"
+      ],
+      "e": "В придаточной части подлежащее «которое». Сказуемое «называется кузнечиком» — составное именное; вся основа: «которое называется кузнечиком».",
+      "origin": "author"
+    },
+    {
+      "id": "right02",
+      "t": "силуэт напоминает",
+      "context": "Его силуэт напоминает колокол.",
+      "highlight": [
+        "силуэт",
+        "напоминает"
+      ],
+      "e": "Подлежащее «силуэт» (что?), сказуемое «напоминает». «Колокол» — дополнение в винительном падеже.",
+      "origin": "author"
+    },
+    {
+      "id": "right03",
+      "t": "небо пронизано",
+      "context": "Нам кажется, что небо пронизано сотней тысяч звёзд.",
+      "highlight": [
+        "небо",
+        "пронизано"
+      ],
+      "e": "В придаточной части подлежащее «небо», сказуемое «пронизано» (краткое страдательное причастие).",
+      "origin": "author"
+    },
+    {
+      "id": "right04",
+      "t": "нарушения могут провоцировать",
+      "context": "Нарушения в работе органов и систем могут провоцировать серьёзные осложнения.",
+      "highlight": [
+        "нарушения",
+        "могут",
+        "провоцировать"
+      ],
+      "e": "Подлежащее «нарушения» (И. п.), составное глагольное сказуемое «могут провоцировать». «Осложнения» — дополнение.",
+      "origin": "author"
+    },
+    {
+      "id": "right05",
+      "t": "создавались летописи",
+      "context": "В русских городах создавались свои летописи.",
+      "highlight": [
+        "создавались",
+        "летописи"
+      ],
+      "e": "Подлежащее «летописи» стоит в именительном падеже, сказуемое «создавались».",
+      "origin": "author"
+    },
+    {
+      "id": "right06",
+      "t": "зажглись фонари",
+      "context": "Вечером на набережной зажглись фонари.",
+      "highlight": [
+        "зажглись",
+        "фонари"
+      ],
+      "e": "Подлежащее «фонари» (что?; именительный падеж), сказуемое «зажглись». Сравни: «зажгли фонари» — винительный падеж, подлежащего нет.",
+      "origin": "author"
+    },
+    {
+      "id": "right07",
+      "t": "дома были утеплены",
+      "context": "К зиме в посёлке старые дома были утеплены.",
+      "highlight": [
+        "дома",
+        "были",
+        "утеплены"
+      ],
+      "e": "Подлежащее «дома» стоит в именительном падеже, сказуемое «были утеплены». Сравни: «утеплили дома» — винительный падеж, подлежащего нет.",
+      "origin": "author"
+    },
+    {
+      "id": "right08",
+      "t": "Дороги — один из памятников",
+      "context": "Дороги — один из древнейших памятников цивилизации.",
+      "highlight": [
+        "Дороги",
+        "один",
+        "из",
+        "памятников"
+      ],
+      "e": "Подлежащее «дороги» стоит в именительном падеже. Составное именное сказуемое с нулевой связкой — «один из древнейших памятников цивилизации». Янтарным выделена его основная конструкция «один из памятников».",
+      "origin": "author"
+    },
+    {
+      "id": "right09",
+      "t": "Происходит это",
+      "context": "Происходит это довольно медленно.",
+      "highlight": [
+        "Происходит",
+        "это"
+      ],
+      "e": "Подлежащее «это» (именительный падеж), сказуемое «происходит». Слова «довольно медленно» обозначают обстоятельство образа действия.",
+      "origin": "author"
+    }
+  ],
+  "negatives": [
+    {
+      "id": "case02",
+      "t": "нарушения вызывают",
+      "context": "Многие из этих изменений вызывают серьёзные нарушения в работе органов и систем.",
+      "focus": "нарушения",
+      "proper": "многие из этих изменений вызывают",
+      "e": "«нарушения» — дополнение в винительном падеже, а не подлежащее. Правильная основа: «многие из этих изменений вызывают».",
+      "sourceId": 27845,
+      "option": 2,
+      "adapted": false,
+      "highlight": [
+        "нарушения",
+        "вызывают"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case03",
+      "t": "начали записывать сведения",
+      "context": "Впервые на Руси начали записывать сведения о событиях ещё в XI веке.",
+      "focus": "сведения",
+      "proper": "начали записывать",
+      "e": "В. п. «сведения». Предложение неопределённо-личное; подлежащего нет. Сказуемое: «начали записывать».",
+      "sourceId": 43338,
+      "option": 2,
+      "adapted": true,
+      "highlight": [
+        "начали",
+        "записывать",
+        "сведения"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case04",
+      "t": "стали создавать летописи",
+      "context": "В русских городах постепенно стали создавать свои летописи.",
+      "focus": "летописи",
+      "proper": "стали создавать",
+      "e": "В. п. «летописи». Предложение неопределённо-личное; подлежащего нет. Сказуемое: «стали создавать».",
+      "sourceId": 43338,
+      "option": 5,
+      "adapted": true,
+      "highlight": [
+        "стали",
+        "создавать",
+        "летописи"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case06",
+      "t": "образуют хохолок",
+      "context": "Пёрышки на голове образуют длинный хохолок.",
+      "focus": "хохолок",
+      "proper": "пёрышки образуют",
+      "e": "В. п. «хохолок» — дополнение. Подлежащее «пёрышки», сказуемое «образуют».",
+      "sourceId": 43341,
+      "option": 3,
+      "adapted": true,
+      "highlight": [
+        "образуют",
+        "хохолок"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case07",
+      "t": "понять упрёки",
+      "context": "Как понять в басне упрёки Муравья Стрекозе?",
+      "focus": "упрёки",
+      "proper": "понять",
+      "e": "«Упрёки» — В. п. (понять что?). Это инфинитивная конструкция без подлежащего; грамматический центр — «понять».",
+      "sourceId": 43347,
+      "option": 1,
+      "adapted": true,
+      "highlight": [
+        "понять",
+        "упрёки"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case08",
+      "t": "которое называем",
+      "context": "Это трель насекомого, которое мы называем кузнечиком.",
+      "focus": "которое",
+      "proper": "мы называем",
+      "e": "В. п. «которое» — дополнение (называем кого? что?); в придаточном подлежащее «мы», сказуемое «называем».",
+      "sourceId": 43347,
+      "option": 5,
+      "adapted": true,
+      "highlight": [
+        "которое",
+        "называем"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case09",
+      "t": "дороги прокладывали",
+      "context": "Дороги прокладывали даже в дремучих лесах.",
+      "focus": "дороги",
+      "proper": "прокладывали",
+      "e": "В. п. «дороги»: прокладывали что? дороги. Это неопределённо-личное предложение, подлежащего нет.",
+      "sourceId": 43349,
+      "option": 2,
+      "adapted": true,
+      "highlight": [
+        "дороги",
+        "прокладывали"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case10",
+      "t": "добывают золото",
+      "context": "Добывают на Урале и золото.",
+      "focus": "золото",
+      "proper": "добывают",
+      "e": "«золото» — дополнение в винительном падеже, а не подлежащее. Правильная основа: «добывают».",
+      "sourceId": 43350,
+      "option": 3,
+      "adapted": false,
+      "highlight": [
+        "добывают",
+        "золото"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case11",
+      "t": "небо пронизывают",
+      "context": "Нам кажется, что небо пронизывают сотни тысяч звёзд.",
+      "focus": "небо",
+      "proper": "сотни тысяч звёзд пронизывают",
+      "e": "В. п. «небо» — дополнение (пронизывают что?). В придаточной части подлежащее — сочетание «сотни тысяч звёзд»; сказуемое «пронизывают».",
+      "sourceId": 43351,
+      "option": 1,
+      "adapted": true,
+      "highlight": [
+        "небо",
+        "пронизывают"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case12",
+      "t": "заливают листья",
+      "context": "В чайнике заливают кипятком чайные листья.",
+      "focus": "листья",
+      "proper": "заливают",
+      "e": "В. п. «листья»: заливают что? листья. Неопределённо-личное предложение, подлежащего нет.",
+      "sourceId": 43352,
+      "option": 5,
+      "adapted": true,
+      "highlight": [
+        "заливают",
+        "листья"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case13",
+      "t": "напоминает колокол",
+      "context": "Его силуэт напоминает колокол.",
+      "focus": "колокол",
+      "proper": "силуэт напоминает",
+      "e": "В. п. «колокол» — дополнение. Подлежащее «силуэт», сказуемое «напоминает».",
+      "sourceId": 43359,
+      "option": 4,
+      "adapted": true,
+      "highlight": [
+        "напоминает",
+        "колокол"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case14",
+      "t": "заботы делят",
+      "context": "Заботы о воспитании лебедят мать и отец делят между собой.",
+      "focus": "заботы",
+      "proper": "мать и отец делят",
+      "e": "«заботы» — дополнение в винительном падеже, а не подлежащее. Правильная основа: «мать и отец делят».",
+      "sourceId": 43361,
+      "option": 3,
+      "adapted": false,
+      "highlight": [
+        "заботы",
+        "делят"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case15",
+      "t": "поджигает кучи",
+      "context": "Зачем садовод осенью поджигает кучи влажного мусора?",
+      "focus": "кучи",
+      "proper": "садовод поджигает",
+      "e": "В. п. «кучи» — дополнение; подлежащее «садовод», сказуемое «поджигает».",
+      "sourceId": 38229,
+      "option": 1,
+      "adapted": true,
+      "highlight": [
+        "поджигает",
+        "кучи"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case16",
+      "t": "звуки можно разделить",
+      "context": "Все эти звуки можно разделить на высокие и низкие.",
+      "focus": "звуки",
+      "proper": "можно разделить",
+      "e": "«звуки» — дополнение в винительном падеже, а не подлежащее. Правильная основа: «можно разделить».",
+      "sourceId": 38507,
+      "option": 2,
+      "adapted": false,
+      "highlight": [
+        "звуки",
+        "можно",
+        "разделить"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "case17",
+      "t": "правила не надо учить",
+      "context": "Правила не надо учить, достаточно практиковаться в анализе образцовых текстов.",
+      "focus": "правила",
+      "proper": "не надо учить",
+      "e": "«Правила» — В. п., дополнение. В части «правила не надо учить» безличное сказуемое «не надо учить»; подлежащего нет.",
+      "sourceId": 38516,
+      "option": 2,
+      "adapted": true,
+      "highlight": [
+        "правила",
+        "не",
+        "надо",
+        "учить"
+      ],
+      "origin": "oge"
+    },
+    {
+      "id": "author18",
+      "t": "замело тропинки",
+      "context": "К утру замело все тропинки в лесу.",
+      "focus": "тропинки",
+      "proper": "замело",
+      "e": "«Тропинки» — В. п. (замело что?). Безличное предложение: подлежащего нет; сказуемое «замело».",
+      "highlight": [
+        "замело",
+        "тропинки"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author19",
+      "t": "разбило окно",
+      "context": "Ночью ветром разбило окно на лестнице.",
+      "focus": "окно",
+      "proper": "разбило",
+      "e": "«Окно» — В. п. (разбило что?). Безличное предложение; сказуемое «разбило», подлежащего нет.",
+      "highlight": [
+        "разбило",
+        "окно"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author20",
+      "t": "сломало забор",
+      "context": "От сильного ветра сломало деревянный забор.",
+      "focus": "забор",
+      "proper": "сломало",
+      "e": "«Забор» — В. п. (сломало что?). Безличное предложение, подлежащего нет.",
+      "highlight": [
+        "сломало",
+        "забор"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author21",
+      "t": "занесло дороги",
+      "context": "К вечеру снегом занесло лесные дороги.",
+      "focus": "дороги",
+      "proper": "занесло",
+      "e": "«Дороги» — В. п. (занесло что?). Безличное предложение, подлежащего нет.",
+      "highlight": [
+        "занесло",
+        "дороги"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author22",
+      "t": "унесло плоты",
+      "context": "За ночь течением унесло плоты вниз по реке.",
+      "focus": "плоты",
+      "proper": "унесло",
+      "e": "«Плоты» — В. п. (унесло что?). Безличное предложение, подлежащего нет.",
+      "highlight": [
+        "унесло",
+        "плоты"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author23",
+      "t": "силуэты можно было различить",
+      "context": "В темноте можно было различить только силуэты деревьев.",
+      "focus": "силуэты",
+      "proper": "можно было различить",
+      "e": "«Силуэты» — В. п. (различить что?). Безличное сказуемое «можно было различить», подлежащего нет.",
+      "highlight": [
+        "силуэты",
+        "можно",
+        "было",
+        "различить"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author24",
+      "t": "велосипеды нельзя оставлять",
+      "context": "Здесь нельзя оставлять велосипеды без присмотра.",
+      "focus": "велосипеды",
+      "proper": "нельзя оставлять",
+      "e": "«Велосипеды» — В. п. (оставлять что?). Безличное сказуемое «нельзя оставлять», подлежащего нет.",
+      "highlight": [
+        "велосипеды",
+        "нельзя",
+        "оставлять"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author25",
+      "t": "зажгли фонари",
+      "context": "Вечером на набережной зажгли фонари.",
+      "focus": "фонари",
+      "proper": "зажгли",
+      "e": "«Фонари» — В. п. (зажгли что?). Неопределённо-личное предложение, подлежащего нет.",
+      "highlight": [
+        "зажгли",
+        "фонари"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author26",
+      "t": "утеплили дома",
+      "context": "К зиме в посёлке утеплили старые дома.",
+      "focus": "дома",
+      "proper": "утеплили",
+      "e": "«Дома» — В. п. (утеплили что?). Неопределённо-личное предложение, подлежащего нет.",
+      "highlight": [
+        "утеплили",
+        "дома"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author27",
+      "t": "заметили следы",
+      "context": "На опушке заметили свежие следы зверя.",
+      "focus": "следы",
+      "proper": "заметили",
+      "e": "«Следы» — В. п. (заметили что?). Неопределённо-личное предложение, подлежащего нет.",
+      "highlight": [
+        "заметили",
+        "следы"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author28",
+      "t": "вырвал кусты",
+      "context": "Сильный ветер вырвал кусты у самого забора.",
+      "focus": "кусты",
+      "proper": "ветер вырвал",
+      "e": "«Кусты» — В. п. (вырвал что?). Подлежащее — «ветер», сказуемое — «вырвал».",
+      "highlight": [
+        "вырвал",
+        "кусты"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author29",
+      "t": "солнце закрыли",
+      "context": "К вечеру тяжёлые тучи закрыли солнце.",
+      "focus": "солнце",
+      "proper": "тучи закрыли",
+      "e": "«Солнце» — В. п. (закрыли что?). Подлежащее — «тучи», сказуемое — «закрыли».",
+      "highlight": [
+        "солнце",
+        "закрыли"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author30",
+      "t": "открыли окна",
+      "context": "Утром пассажиры открыли окна вагона.",
+      "focus": "окна",
+      "proper": "пассажиры открыли",
+      "e": "«Окна» — В. п. (открыли что?). Подлежащее — «пассажиры», сказуемое — «открыли».",
+      "highlight": [
+        "открыли",
+        "окна"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author31",
+      "t": "семена клевали",
+      "context": "На опушке птицы клевали семена трав.",
+      "focus": "семена",
+      "proper": "птицы клевали",
+      "e": "«Семена» — В. п. (клевали что?). Подлежащее — «птицы», сказуемое — «клевали».",
+      "highlight": [
+        "семена",
+        "клевали"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "author32",
+      "t": "красили забор",
+      "context": "С раннего утра рабочие красили забор.",
+      "focus": "забор",
+      "proper": "рабочие красили",
+      "e": "«Забор» — В. п. (красили что?). Подлежащее — «рабочие», сказуемое — «красили».",
+      "highlight": [
+        "красили",
+        "забор"
+      ],
+      "origin": "author"
+    },
+    {
+      "id": "newauthor01",
+      "t": "повалило дерево",
+      "context": "Ночью ветром повалило дерево у сарая.",
+      "highlight": [
+        "повалило",
+        "дерево"
+      ],
+      "focus": "дерево",
+      "proper": "повалило",
+      "e": "«Дерево» — В. п. (повалило что?). Безличное предложение; сказуемое «повалило», подлежащего нет.",
+      "origin": "author"
+    },
+    {
+      "id": "newauthor02",
+      "t": "затопило подвалы",
+      "context": "К утру затопило низкие подвалы.",
+      "highlight": [
+        "затопило",
+        "подвалы"
+      ],
+      "focus": "подвалы",
+      "proper": "затопило",
+      "e": "«Подвалы» — В. п. (затопило что?). Безличное предложение; подлежащего нет.",
+      "origin": "author"
+    },
+    {
+      "id": "newauthor03",
+      "t": "пришлось задержать поезда",
+      "context": "Из-за непогоды на станции пришлось задержать поезда.",
+      "highlight": [
+        "пришлось",
+        "задержать",
+        "поезда"
+      ],
+      "focus": "поезда",
+      "proper": "пришлось задержать",
+      "e": "«Поезда» — В. п. (задержать что?). Безличное предложение; сказуемое «пришлось задержать», подлежащего нет.",
+      "origin": "author"
+    },
+    {
+      "id": "newauthor04",
+      "t": "было невозможно открыть ворота",
+      "context": "После шторма было невозможно открыть ворота.",
+      "highlight": [
+        "было",
+        "невозможно",
+        "открыть",
+        "ворота"
+      ],
+      "focus": "ворота",
+      "proper": "было невозможно открыть",
+      "e": "«Ворота» — В. п. (открыть что?). Безличное предложение, подлежащего нет.",
+      "origin": "author"
+    },
+    {
+      "id": "newauthor05",
+      "t": "намело сугробы",
+      "context": "За ночь намело огромные сугробы.",
+      "highlight": [
+        "намело",
+        "сугробы"
+      ],
+      "focus": "сугробы",
+      "proper": "намело",
+      "e": "«Сугробы» — В. п. (намело что?). Безличное предложение, подлежащего нет.",
+      "origin": "author"
+    },
+    {
+      "id": "newauthor06",
+      "t": "начало затягивать вершины",
+      "context": "На рассвете начало затягивать туманом вершины гор.",
+      "highlight": [
+        "начало",
+        "затягивать",
+        "вершины"
+      ],
+      "focus": "вершины",
+      "proper": "начало затягивать",
+      "e": "«Вершины» — В. п. (затягивать что?). Безличное предложение; сказуемое «начало затягивать».",
+      "origin": "author"
+    },
+    {
+      "id": "newauthor07",
+      "t": "было трудно расслышать слова",
+      "context": "За шумом было трудно расслышать слова.",
+      "highlight": [
+        "было",
+        "трудно",
+        "расслышать",
+        "слова"
+      ],
+      "focus": "слова",
+      "proper": "было трудно расслышать",
+      "e": "«Слова» — В. п. (расслышать что?). Безличное предложение, подлежащего нет.",
+      "origin": "author"
+    },
+    {
+      "id": "newauthor08",
+      "t": "удалось разглядеть окна",
+      "context": "В полной темноте удалось разглядеть окна дома.",
+      "highlight": [
+        "удалось",
+        "разглядеть",
+        "окна"
+      ],
+      "focus": "окна",
+      "proper": "удалось разглядеть",
+      "e": "«Окна» — В. п. (разглядеть что?). Безличное предложение; сказуемое «удалось разглядеть».",
+      "origin": "author"
+    },
+    {
+      "id": "newauthor09",
+      "t": "переплели журналы",
+      "context": "В библиотеке переплели старые журналы.",
+      "highlight": [
+        "переплели",
+        "журналы"
+      ],
+      "focus": "журналы",
+      "proper": "переплели",
+      "e": "«Журналы» — В. п. (переплели что?). Неопределённо-личное предложение, подлежащего нет.",
+      "origin": "author"
+    },
+    {
+      "id": "newauthor10",
+      "t": "показали экспонаты",
+      "context": "В музее показали новые экспонаты.",
+      "highlight": [
+        "показали",
+        "экспонаты"
+      ],
+      "focus": "экспонаты",
+      "proper": "показали",
+      "e": "«Экспонаты» — В. п. (показали что?). Неопределённо-личное предложение, подлежащего нет.",
+      "origin": "author"
+    },
+    {
+      "id": "newauthor11",
+      "t": "собирали ракушки",
+      "context": "На берегу собирали ракушки.",
+      "highlight": [
+        "собирали",
+        "ракушки"
+      ],
+      "focus": "ракушки",
+      "proper": "собирали",
+      "e": "«Ракушки» — В. п. (собирали что?). Неопределённо-личное предложение, подлежащего нет.",
+      "origin": "author"
+    },
+    {
+      "id": "newauthor12",
+      "t": "гнал облака",
+      "context": "Ветер гнал облака через долину.",
+      "highlight": [
+        "гнал",
+        "облака"
+      ],
+      "focus": "облака",
+      "proper": "ветер гнал",
+      "e": "«Облака» — В. п. (гнал что?). Подлежащее «ветер», сказуемое «гнал».",
+      "origin": "author"
+    },
+    {
+      "id": "newauthor13",
+      "t": "раскладывали игрушки",
+      "context": "На ярмарке продавцы раскладывали игрушки.",
+      "highlight": [
+        "раскладывали",
+        "игрушки"
+      ],
+      "focus": "игрушки",
+      "proper": "продавцы раскладывали",
+      "e": "«Игрушки» — В. п. (раскладывали что?). Подлежащее «продавцы», сказуемое «раскладывали».",
+      "origin": "author"
+    },
+    {
+      "id": "bank38559_3",
+      "t": "увеличивает свойства",
+      "context": "Например, добавление к стали титана, хрома, никеля значительно увеличивает её антикоррозийные свойства.",
+      "highlight": [
+        "увеличивает",
+        "свойства"
+      ],
+      "focus": "свойства",
+      "e": "«Свойства» — В. п.: увеличивает что? свойства. Подлежащее «добавление», сказуемое «увеличивает».",
+      "proper": "добавление увеличивает",
+      "sourceId": 38559,
+      "option": 3,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank38559_4",
+      "t": "применяют способ",
+      "context": "Для защиты металлов от атмосферной коррозии часто применяют такой способ.",
+      "highlight": [
+        "применяют",
+        "способ"
+      ],
+      "focus": "способ",
+      "e": "«Способ» — В. п.: применяют что? способ. Первая часть — неопределённо-личная, подлежащего нет; сказуемое «применяют».",
+      "proper": "применяют",
+      "sourceId": 38559,
+      "option": 4,
+      "adapted": true,
+      "origin": "oge"
+    }
+  ]
+}
+,
+{
+  "id": "indivisible-bases",
+  "title": "Основа или лишнее слово? · ОГЭ",
+  "category": "Практика · ОГЭ, задание 2 · Только исходные варианты",
+  "question": "В каких предложениях предложенная грамматическая основа указана ВЕРНО?",
+  "positives": [
+    {
+      "id": "bank43349_1",
+      "t": "дороги — один из памятников",
+      "context": "Дороги — один из древнейших памятников цивилизации.",
+      "highlight": [
+        "Дороги",
+        "один",
+        "из",
+        "памятников"
+      ],
+      "e": "«Один из памятников» — цельное именное сказуемое; слово «памятников» обязательно входит в него.",
+      "sourceId": 43349,
+      "option": 1,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank38515_1",
+      "t": "существует множество планет",
+      "context": "Планета Земля неповторима, несмотря на то что существует множество других планет.",
+      "highlight": [
+        "существует",
+        "множество",
+        "планет"
+      ],
+      "e": "В придаточной части подлежащее — цельное количественно-именное сочетание «множество планет»; сказуемое — «существует».",
+      "sourceId": 38515,
+      "option": 1,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank38605_5",
+      "t": "следует иметь в виду",
+      "context": "Следует иметь в виду, что каждое графическое сообщение состоит из нескольких текстовых сообщений, поэтому стоимость передачи графического сообщения может оказаться больше, чем стоимость передачи текстового сообщения.",
+      "highlight": [
+        "Следует",
+        "иметь",
+        "в",
+        "виду"
+      ],
+      "e": "В безличной части основа — «следует иметь в виду»; устойчивое выражение «иметь в виду» не разбивается.",
+      "sourceId": 38605,
+      "option": 5,
+      "adapted": false,
+      "origin": "oge"
+    }
+  ],
+  "negatives": [
+    {
+      "id": "bank38605_2",
+      "t": "сообщения хранятся в памяти телефона",
+      "context": "Эти графические сообщения хранятся в памяти телефона.",
+      "highlight": [
+        "сообщения",
+        "хранятся",
+        "в",
+        "памяти",
+        "телефона"
+      ],
+      "e": "Основа «сообщения хранятся». «В памяти телефона» — обстоятельство места, оно не входит в грамматическую основу.",
+      "sourceId": 38605,
+      "option": 2,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank43349_3",
+      "t": "улицы старых городов — (это) дороги",
+      "context": "Многие улицы старых городов — это древние дороги.",
+      "highlight": [
+        "улицы",
+        "старых",
+        "городов",
+        "это",
+        "дороги"
+      ],
+      "e": "Подлежащее «улицы», сказуемое «(это) дороги». «Старых городов» — несогласованное определение, добавленное в основу.",
+      "sourceId": 43349,
+      "option": 3,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank38409_2",
+      "t": "сирень как невеста",
+      "context": "Сирень, как невеста, стояла вся в белом.",
+      "highlight": [
+        "Сирень",
+        "как",
+        "невеста"
+      ],
+      "e": "«Как невеста» здесь обособленный сравнительный оборот, а не сказуемое: запятые принципиальны. Правильная основа «сирень стояла».",
+      "sourceId": 38409,
+      "option": 2,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank38611_3",
+      "t": "помощи хватало",
+      "context": "У многих народов пальцы (или их суставы) при любых торговых операциях выполняли роль первого счётного устройства, для большинства бытовых потребностей людей их помощи вполне хватало.",
+      "highlight": [
+        "помощи",
+        "хватало"
+      ],
+      "e": "Вторая часть бессоюзного сложного предложения безличная. Главный член «хватало», «помощи» — зависимое слово в родительном падеже.",
+      "sourceId": 38611,
+      "option": 3,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank38635_1",
+      "t": "бывает история терминов",
+      "context": "Какой неожиданной порой бывает история лингвистических терминов!",
+      "highlight": [
+        "бывает",
+        "история",
+        "терминов"
+      ],
+      "e": "«Терминов» — несогласованное определение при подлежащем «история». В сказуемом пропущена именная часть «неожиданной».",
+      "sourceId": 38635,
+      "option": 1,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank43355_2",
+      "t": "расположены части",
+      "context": "И всё же самые обширные таёжные леса расположены в азиатской части России, а именно в Сибири.",
+      "highlight": [
+        "расположены",
+        "части"
+      ],
+      "e": "«Части» входит в обстоятельство «в азиатской части России», стоит в предложном падеже. Основа «леса расположены».",
+      "sourceId": 43355,
+      "option": 2,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank43357_2",
+      "t": "олени приспособленные",
+      "context": "Самые интересные, пожалуй, северные олени, замечательно приспособленные к жизни в суровых условиях.",
+      "highlight": [
+        "олени",
+        "приспособленные"
+      ],
+      "e": "«Приспособленные» — полное причастие в составе обособленного определения, не сказуемое. В основной конструкции сказуемое «самые интересные».",
+      "sourceId": 43357,
+      "option": 2,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank43358_4",
+      "t": "помогает зверькам охотиться",
+      "context": "Мыши летали в темноте, но ни один колокольчик не был задет – значит, не зрение помогает зверькам охотиться ночью.",
+      "highlight": [
+        "помогает",
+        "зверькам",
+        "охотиться"
+      ],
+      "e": "Основа «зрение помогает». «Зверькам» — косвенное дополнение; инфинитив «охотиться» обозначает действие другого лица и здесь не входит в сказуемое.",
+      "sourceId": 43358,
+      "option": 4,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank38590_3",
+      "t": "разрушаются Земли",
+      "context": "Высокие горы энергично разрушаются внешними силами Земли: ветром, водой, суточными и сезонными колебаниями температуры и движущимися ледниками.",
+      "highlight": [
+        "разрушаются",
+        "Земли"
+      ],
+      "e": "«Земли» — несогласованное определение при слове «силами» (силами чего?). Основа «горы разрушаются».",
+      "sourceId": 38590,
+      "option": 3,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank38404_1",
+      "t": "перед человечеством стоят",
+      "context": "Перед человечеством стоят глобальные проблемы: рост населения мира, социальное неравенство, проблемы использования Мирового океана и космического пространства, природных ресурсов и защиты окружающей среды.",
+      "highlight": [
+        "Перед",
+        "человечеством",
+        "стоят"
+      ],
+      "e": "«Перед человечеством» — косвенный компонент, не часть грамматической основы. Подлежащее «проблемы», сказуемое «стоят».",
+      "sourceId": 38404,
+      "option": 1,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank38584_2",
+      "t": "компьютеру задать",
+      "context": "Достаточно компьютеру задать форму объекта и длину волны падающего на него света, и по этим данным рисуется картина интерференции отражённых лучей.",
+      "highlight": [
+        "компьютеру",
+        "задать"
+      ],
+      "e": "«Компьютеру» — дополнение в дательном падеже. В первой части главный член безличного предложения «достаточно задать».",
+      "sourceId": 38584,
+      "option": 2,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank38391_5",
+      "t": "обладают ресурсами",
+      "context": "Самыми большими ресурсами приливной энергии обладают Россия, Франция, Канада, Великобритания, Австралия, Аргентина, США.",
+      "highlight": [
+        "ресурсами",
+        "обладают"
+      ],
+      "e": "«Ресурсами» — косвенное дополнение в творительном падеже. Подлежащие — названия стран, сказуемое «обладают».",
+      "sourceId": 38391,
+      "option": 5,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank28072_3",
+      "t": "пользоваться возможностями",
+      "context": "Десятки тысяч слов, употреблённых А. С. Пушкиным в его произведениях, безусловно, указывают на огромный круг его представлений и знаний и на его умение мастерски пользоваться безграничными возможностями русского языка.",
+      "highlight": [
+        "пользоваться",
+        "возможностями"
+      ],
+      "e": "«Пользоваться» зависит от существительного «умение», а «возможностями» — косвенное дополнение. В предложенном сочетании вообще нет грамматической основы.",
+      "sourceId": 28072,
+      "option": 3,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank38379_1",
+      "t": "медведь обитает по России",
+      "context": "Бурый медведь обитает по всей лесной зоне, кроме юга Европейской части России, и местами в лесотундре.",
+      "highlight": [
+        "медведь",
+        "обитает",
+        "по",
+        "России"
+      ],
+      "e": "В исходном варианте написано именно «медведь обитает по России». В предложении слова «по» и «России» относятся к разным сочетаниям; основа «медведь обитает», обстоятельства в неё не входят.",
+      "sourceId": 38379,
+      "option": 1,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank43352_1",
+      "t": "чай — один из напитков",
+      "context": "Трудно поверить, что чай — один из самых популярных и любимых напитков в России — появился в нашей стране менее 400 лет назад.",
+      "highlight": [
+        "чай",
+        "один",
+        "из",
+        "напитков"
+      ],
+      "e": "Обособленное тире приложение «один из самых популярных и любимых напитков в России» не является сказуемым. В придаточной части основа «чай появился».",
+      "sourceId": 43352,
+      "option": 1,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "bank28810_1",
+      "t": "один на Земле",
+      "context": "Процесс горения — один из важнейших физико-химических процессов на Земле.",
+      "highlight": [
+        "один",
+        "на",
+        "Земле"
+      ],
+      "e": "Составное именное сказуемое здесь «один из процессов». «На Земле» — обстоятельство (или распространитель существительного в группе сказуемого), а в исходном варианте одновременно пропущены обязательные слова сказуемого.",
+      "sourceId": 28810,
+      "option": 1,
+      "adapted": false,
+      "origin": "oge"
+    }
+  ]
+},
+{
+  "id": "homogeneous-bases",
+  "title": "Однородные главные члены · ОГЭ-2",
+  "category": "Практика · задание 2 ОГЭ",
+  "question": "Где грамматическая основа с однородными членами указана ВЕРНО?",
+  "positives": [
+    {
+      "id": "hom-p-38229-4",
+      "t": "дым поднимается (и) опускается",
+      "context": "Дым от костров поднимается невысоко и не сразу опускается на землю.",
+      "highlight": [
+        "Дым",
+        "поднимается",
+        "опускается"
+      ],
+      "e": "Оба однородных сказуемых указаны: «поднимается» и «опускается». Подлежащее — «дым».",
+      "sourceId": 38229,
+      "option": 4,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "hom-p-27825-5",
+      "t": "учёные отказываются признавать (и) обосновывают",
+      "context": "На некоторых картах отмечен ещё один океан — Южный, который омывает Антарктиду, однако многие учёные отказываются признавать его отдельное существование и обосновывают это целой системой научных доказательств.",
+      "highlight": [
+        "учёные",
+        "отказываются",
+        "признавать",
+        "обосновывают"
+      ],
+      "e": "В последней части сложного предложения оба однородных сказуемых названы полностью: «отказываются признавать» и «обосновывают».",
+      "sourceId": 27825,
+      "option": 5,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "hom-p-43347-4",
+      "t": "стрекоза могла петь (и) плясать",
+      "context": "Только та стрекоза, которая в действительности была кузнечиком, могла петь и плясать, поэтому и М. Ю. Лермонтов в поэме «Мцыри» написал: «И стрекозы живая трель послышалась».",
+      "highlight": [
+        "стрекоза",
+        "могла",
+        "петь",
+        "плясать"
+      ],
+      "e": "Оба однородных инфинитива входят в состав сказуемого: «могла петь и плясать».",
+      "sourceId": 43347,
+      "option": 4,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "hom-p-43360-3",
+      "t": "которые погибали (и) ложились",
+      "context": "Деревья со временем умирали, падали на болотистую почву, а на их месте вырастали новые, которые потом погибали и ложились поверх прежних, — так постепенно накапливался толстый слой остатков этих деревьев.",
+      "highlight": [
+        "которые",
+        "погибали",
+        "ложились"
+      ],
+      "e": "В придаточной части подлежащее — «которые», однородные сказуемые — «погибали» и «ложились». Ничего не пропущено.",
+      "sourceId": 43360,
+      "option": 3,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "hom-p-43361-4",
+      "t": "лебедь становится ручным, живёт",
+      "context": "В неволе белый лебедь быстро становится ручным, мирно живёт в зоологических садах рядом с чёрным лебедем — гостем из Австралии.",
+      "highlight": [
+        "лебедь",
+        "становится",
+        "ручным",
+        "живёт"
+      ],
+      "e": "Правильно выписаны два однородных сказуемых: составное именное «становится ручным» и простое глагольное «живёт».",
+      "sourceId": 43361,
+      "option": 4,
+      "adapted": false,
+      "origin": "oge"
+    }
+  ],
+  "negatives": [
+    {
+      "id": "hom-n-43347-3",
+      "t": "прыжки грациозны",
+      "context": "Дело в том, что в этой басне Крылов писал не о стрекозе; в начале XIX века так называли кузнечика: кузнечик стрекочет, поэтому он и назывался стрекозой, его прыжки грациозны и похожи на танец.",
+      "highlight": [
+        "прыжки",
+        "грациозны"
+      ],
+      "e": "Пропущено второе однородное сказуемое «похожи». Правильно: «прыжки грациозны и похожи».",
+      "sourceId": 43347,
+      "option": 3,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "hom-n-43348-4",
+      "t": "появились обитатели",
+      "context": "Так появились вуалехвост, телескоп, комета, львиноголовка и многие другие обитатели аквариумов.",
+      "highlight": [
+        "появились",
+        "обитатели"
+      ],
+      "e": "Однородные подлежащие выписаны не все: «вуалехвост, телескоп, комета, львиноголовка и многие другие обитатели».",
+      "sourceId": 43348,
+      "option": 4,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "hom-n-43357-1",
+      "t": "входят олень (и) косуля",
+      "context": "Олени — это большая группа животных: в неё входят и северный олень, и жительница лесов Европы — косуля, и дальневосточные изюбры, и сибирские маралы, и североамериканские виргинские олени, и лоси, и лани.",
+      "highlight": [
+        "входят",
+        "олень",
+        "косуля"
+      ],
+      "e": "Перечислены лишь два однородных подлежащих. Пропущены другие члены большого ряда: изюбры, маралы, виргинские олени, лоси, лани; «жительница лесов Европы — косуля» — сочетание с приложением.",
+      "sourceId": 43357,
+      "option": 1,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "hom-n-43358-1",
+      "t": "висят они",
+      "context": "Летучие мыши — насекомоядные зверьки, ведущие ночной образ жизни: днём, завернувшись в свои широкие крылья, как в плащи, висят они где-нибудь в дуплах, на чердаках, в тёмных местах вниз головой, а ночью вылетают на охоту за насекомыми.",
+      "highlight": [
+        "висят",
+        "они"
+      ],
+      "e": "Подлежащее «они» и сказуемое «висят» выделены правильно, но не включено второе однородное сказуемое «вылетают». Полная основа этой части: «они висят, вылетают». Для более сложной ловушки подлежащее «они» добавлено нами к исходному варианту ОГЭ «висят».",
+      "sourceId": 43358,
+      "option": 1,
+      "adapted": true,
+      "origin": "oge"
+    },
+    {
+      "id": "hom-n-43360-2",
+      "t": "росли деревья",
+      "context": "Климат на земном шаре в те далёкие времена был сырой и тёплый, на болотистой почве росли густая трава и огромные деревья с пышными кронами.",
+      "highlight": [
+        "росли",
+        "деревья"
+      ],
+      "e": "Пропущено однородное подлежащее «трава». Полная основа второй части: «трава и деревья росли».",
+      "sourceId": 43360,
+      "option": 2,
+      "adapted": false,
+      "origin": "oge"
+    },
+    {
+      "id": "hom-n-38379-4",
+      "t": "дробит свет",
+      "context": "Медведь выглядит белым, потому что неровная внутренняя поверхность трубочек меха дробит свет и отражает его под различными углами, что и создаёт видимость белого цвета.",
+      "highlight": [
+        "дробит",
+        "свет"
+      ],
+      "e": "Пропущено второе однородное сказуемое «отражает» и подлежащее «поверхность», а «свет» — дополнение. Полная основа этой части: «поверхность дробит и отражает».",
+      "sourceId": 38379,
+      "option": 4,
+      "adapted": false,
+      "origin": "oge"
+    }
+  ]
+}
+];
+const RULES={
+  'homogeneous-bases':`<h3>ОГЭ, задание 2: однородные подлежащие и сказуемые</h3><p><strong>Проверь, все ли однородные главные члены предложения выписаны в предлагаемую основу.</strong> Иногда оставляют одно подлежащее из целого ряда или только одно из двух сказуемых.</p><p>Важное отличие: однородные члены относятся к <strong>одной части предложения</strong>, а в соседних частях сложного предложения могут быть совершенно другие основы.</p><p>Янтарным выделены слова из <strong>подлинного варианта ответа</strong> задания 2 ОГЭ, а не готовый правильный разбор. В некоторых неверных вариантах допущены дополнительные ошибки: пропущено подлежащее, указано дополнение и т. п.</p><p>В этом слайде нет авторских вариантов: предложения, пунктуация и предлагаемые основы взяты из открытого банка ФИПИ в каталоге «РЕШУ ОГЭ». Номер исходного задания виден под каждой карточкой.</p>`,
+  'homogeneous-members':`<h3>Правило: однородные члены предложения</h3><p>Однородные члены обычно узнаём по совокупности признаков:</p><ol><li>Отвечают на один и тот же вопрос.</li><li>Относятся к одному и тому же слову.</li><li>Выполняют одинаковую синтаксическую функцию.</li><li>Связаны сочинительно: могут соединяться сочинительными союзами или без союзов.</li><li>Произносятся с интонацией перечисления, сопоставления, противопоставления.</li></ol><p><strong>Пунктуация:</strong> запятая между однородными членами ставится не всегда. Перед одиночными союзами И, ИЛИ, ЛИБО, ДА (= И) она не ставится.</p><div class="examples"><p><strong>На поляне росли берёзы, сосны и ели.</strong> — что? берёзы, сосны, ели (однородные подлежащие).</p><p><strong>Он отвечал быстро и с уверенностью.</strong> — как? быстро и с уверенностью (однородные обстоятельства, выраженные разными частями речи).</p><p><strong>Она не смеялась, а плакала.</strong> — что делала? не смеялась, а плакала (однородные сказуемые, противопоставление).</p></div>`,
+  'subject':`<h3>Правило: подлежащее</h3><p><strong>Подлежащее</strong> — главный член двусоставного предложения. Отвечает на вопросы <strong>кто? что?</strong> При определении подлежащего особенно важно отличать их от вопросов косвенных падежей.</p><p>Подлежащим может быть не только одно слово, но и синтаксически цельное сочетание:</p><ul><li><strong>Количество:</strong> «Пять учеников пришли» — подлежащее <strong>пять учеников</strong>; главное слово <strong>пять</strong> стоит в именительном падеже.</li><li><strong>Избирательность:</strong> «Один из ребят ответил» — подлежащее <strong>один из ребят</strong>.</li><li><strong>Совместность:</strong> «Брат с сестрой пришли» — подлежащее <strong>брат с сестрой</strong> (оба действуют). Но: «Брат с сестрой пришёл» — подлежащее <strong>брат</strong>.</li><li><strong>Однородные:</strong> «Маша и Саша читали» — подлежащие <strong>Маша</strong> и <strong>Саша</strong>.</li></ul><div class="examples"><p><strong>Не путай падежи!</strong> И. п. — <strong>кто? что?</strong>; Р. п. — кого? чего?; Д. п. — кому? чему?; В. п. — кого? что?; Т. п. — кем? чем?; П. п. — о ком? о чём?</p><p><strong>Важное уточнение:</strong> «Учиться полезно» — подлежащее «учиться» выражено инфинитивом; у него нет падежа. В сочетании «пять учеников» главное слово «пять» стоит в именительном падеже.</p><p>«Красная площадь опустела» — целое собственное наименование может выступать подлежащим; обычное определение в сочетании «высокая берёза» в подлежащее не входит.</p></div>`
+  ,'indivisible-bases':`<h3>ОГЭ, задание 2: лишнее слово или цельное сочетание?</h3><p>Жёлтым показаны <strong>все слова, которые перечислены в исходном варианте ответа</strong>. Наша задача — определить, какие варианты соответствуют настоящей грамматической основе. Сами формулировки предложенных основ взяты из заданий без переделок.</p><p><strong>Неверные варианты:</strong> к основе могут ошибочно присоединить обычное определение, обстоятельство, косвенное дополнение, сравнительный оборот, приложение или причастие. Иногда при этом пропускают настоящие главные члены.</p><p><strong>Верные варианты:</strong> не исключай обязательную часть цельного сочетания, например «множество планет» или «один из памятников». В «следует иметь в виду» устойчивое сочетание входит в главный член безличного предложения.</p><p>Смотри на знаки препинания: «Сирень, как невеста, стояла вся в белом» и «чай — один из напитков — появился» не означают, что выделенные обороты здесь сказуемые.</p><p>Все карточки — исходные варианты ответа из каталога открытого банка ФИПИ на «РЕШУ ОГЭ». По ссылке с номером задания можно проверить оригинал.</p>`
+  ,'case-traps':`<h3>Винительный падеж в ловушках задания 2 ОГЭ</h3><p>В каждом предложении найди грамматическую основу и проверь, не приняли ли дополнение в винительном падеже за подлежащее. <strong>Не путай подлежащее с деятелем:</strong> в страдательной конструкции «дома были утеплены» подлежащее не выполняет действие, но стоит в именительном падеже.</p><p>Если вопросы <strong>что?</strong> совпадают, попробуй заменить слово на <strong>«воду»</strong> или <strong>«лису»</strong>: «прокладывали дороги» → «прокладывали дорогу» (винительный падеж). Не забывай об односоставных предложениях без подлежащего.</p><p>Для проверки обязательно учитывай исходное предложение: отдельно взятая фраза «дороги прокладывали» может иметь другой разбор.</p>`
+};
+const storageKey='uznai-pravilo-progress-v2';
+const legacyKey='uznai-pravilo-progress-v1';
+const $=id=>document.getElementById(id);
+const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
+const blankStats=()=>({attempts:0,independentWins:0,days:[]});
+const sanitize=s=>({attempts:Math.max(0,Number(s?.attempts)||0),independentWins:Math.max(0,Number(s?.independentWins)||0),days:Array.isArray(s?.days)?[...new Set(s.days.filter(v=>typeof v==='string'))]:[]});
+let progress={version:2,lastSlideId:'homogeneous-members',slides:{}};
+try{
+  const stored=JSON.parse(localStorage.getItem(storageKey)||'null');
+  if(stored&&stored.slides){
+    progress.lastSlideId=stored.lastSlideId||progress.lastSlideId;
+    for(const s of SLIDES)if(stored.slides[s.id])progress.slides[s.id]=sanitize(stored.slides[s.id]);
+  }else{
+    const legacy=JSON.parse(localStorage.getItem(legacyKey)||'null');
+    if(legacy&&typeof legacy==='object')progress.slides['homogeneous-members']=sanitize(legacy);
+  }
+}catch(_){}
+
+function highlightContext(sentence,words){
+ const holder=document.createElement('span');
+ const parts=(words||[]).filter(Boolean).map(w=>w.replace(/[.*+?^${}()|[\]\\]/g,'\$&'));
+ if(!parts.length){holder.textContent=sentence;return holder}
+ const re=new RegExp('(?<![\\p{L}\\p{N}])('+parts.join('|')+')(?![\\p{L}\\p{N}])','giu');
+ let from=0,m;
+ while((m=re.exec(sentence))!==null){
+   holder.appendChild(document.createTextNode(sentence.slice(from,m.index)));
+   const mark=document.createElement('mark');mark.className='proposed-mark';mark.textContent=m[0];holder.appendChild(mark);
+   from=re.lastIndex;
+ }
+ holder.appendChild(document.createTextNode(sentence.slice(from)));
+ return holder;
+}
+
+let slide=SLIDES.find(s=>s.id===progress.lastSlideId)||SLIDES[0];
+let deck=[],chosen=new Set(),checked=false,usedHint=false;
+function stats(){return progress.slides[slide.id]||(progress.slides[slide.id]=blankStats())}
+function persist(){progress.lastSlideId=slide.id;try{localStorage.setItem(storageKey,JSON.stringify(progress))}catch(_){}}
+function statText(){const s=stats(),d=s.days.length;return `Попыток: ${s.attempts} • Верно без подсказки: ${s.independentWins} • Дней с верным ответом: ${d}/3${d>=3?' ✓':''}`}
+function renderNav(){
+  const ix=SLIDES.findIndex(s=>s.id===slide.id);
+  $('slideSelect').value=slide.id;
+  $('prevBtn').disabled=ix<=0;$('nextBtn').disabled=ix>=SLIDES.length-1;
+  $('index').textContent=`Слайд ${String(ix+1).padStart(2,'0')} из ${SLIDES.length} · Синтаксис`;
+}
+function newVariant(){
+  if((slide.id==='case-traps'||slide.id==='indivisible-bases'||slide.id==='homogeneous-bases')){
+    deck=shuffle([...slide.positives,...slide.negatives]);
+  }else{
+    const mandatory=new Set(slide.mandatoryNegativeIds||[]);
+    const pinned=slide.negatives.filter(n=>mandatory.has(n.id));
+    const rotating=shuffle(slide.negatives.filter(n=>!mandatory.has(n.id))).slice(0,Math.max(0,(slide.falsePerAttempt||12)-pinned.length));
+    deck=shuffle([...slide.positives,...pinned,...rotating]);
+  }
+  chosen=new Set();checked=false;usedHint=false;
+  $('rulePanel').classList.remove('visible');$('ruleBtn').textContent='Правило';
+  $('feedback').className='feedback';$('feedback').innerHTML='';
+  $('resultBanner').className='result-banner';$('resultBanner').textContent='';
+  $('rulePanel').innerHTML=RULES[slide.id];
+  render();
+}
+function switchSlide(id){
+  const next=SLIDES.find(s=>s.id===id);if(!next)return;
+  slide=next;persist();newVariant();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function makeStatement(item){
+  const el=document.createElement('span');
+  const emph=(slide.id==='homogeneous-members'&&item.id==='n9'||slide.id==='subject'&&item.id==='p1')?'ВСЕГДА':item.id.startsWith('case-')?item.t.match(/(?:КОМУ\? ЧЕМУ\?|КЕМ\? ЧЕМ\?|О КОМ\? О ЧЁМ\?|КОГО\? ЧТО\?|КОГО\? ЧЕГО\?)/)?.[0]:null;
+  if(!emph){el.textContent=item.t;return el}
+  const at=item.t.indexOf(emph);el.append(document.createTextNode(item.t.slice(0,at)));
+  const st=document.createElement('strong');st.className=emph==='ВСЕГДА'?'emph-always':'emph-case';st.textContent=emph;
+  el.append(st,document.createTextNode(item.t.slice(at+emph.length)));return el;
+}
+function render(){
+  renderNav();$('question').textContent=slide.question;
+  document.querySelector('.instruction').textContent=(slide.id==='case-traps'||slide.id==='indivisible-bases'||slide.id==='homogeneous-bases')?'В каждом предложении янтарным выделена предлагаемая основа. Выбирай только те карточки, где она верна.':'Нажми на все верные утверждения. Ложные оставь без отметки. Количество правильных ответов не сообщается.';
+  $('cards').className='grid'+((slide.id==='case-traps'||slide.id==='indivisible-bases'||slide.id==='homogeneous-bases')?' compact':'');$('againBtn').disabled=false;$('againBtn').textContent='Новый вариант';
+  $('stat').textContent=statText();$('count').textContent=`Выбрано: ${chosen.size}${(slide.id==='case-traps'||slide.id==='indivisible-bases'||slide.id==='homogeneous-bases')?' из '+deck.length+' карточек':''}`;
+  const grid=$('cards');grid.innerHTML='';
+  const correctIds=new Set(slide.positives.map(x=>x.id));
+  for(const item of deck){
+    const btn=document.createElement('button');btn.type='button';btn.className='choice';btn.setAttribute('aria-pressed',String(chosen.has(item.id)));btn.setAttribute('aria-label',(slide.id==='case-traps'||slide.id==='indivisible-bases'||slide.id==='homogeneous-bases')?`Предложение: ${item.context}. Проверяемая основа: ${item.t}`:item.t);btn.disabled=checked;
+    const selected=chosen.has(item.id),right=correctIds.has(item.id);
+    if(checked){const state=right?(selected?'correct':'missed'):(selected?'wrong':null);if(state)btn.classList.add(state)}else if(selected)btn.classList.add('selected');
+    const mark=document.createElement('span');mark.className='mark';mark.setAttribute('aria-hidden','true');mark.textContent=checked?(right?(selected?'✓':'!'):(selected?'×':'')):(selected?'✓':'');
+    const content=document.createElement('span');content.className='choice-copy';if((slide.id!=='case-traps'&&slide.id!=='indivisible-bases'&&slide.id!=='homogeneous-bases'))content.appendChild(makeStatement(item));
+    if(checked&&(selected||right)){const status=document.createElement('small');status.className='verdict';status.textContent=right?(selected?'✓ Верно выбрано':'! Верный ответ пропущен'):'× Лишний выбор';content.appendChild(status)}
+    if((slide.id==='case-traps'||slide.id==='indivisible-bases'||slide.id==='homogeneous-bases')&&item.context){
+      const ctx=document.createElement('small');ctx.className='contextline';ctx.appendChild(highlightContext(item.context,item.highlight));content.appendChild(ctx);
+      if(checked||slide.id==='indivisible-bases'||slide.id==='homogeneous-bases'){
+        const src=document.createElement('small');src.className='sourceline';
+        src.textContent=item.origin==='oge'?`ОГЭ № ${item.sourceId}, пункт ${item.option}${item.adapted?' · наше выделение':' · исходный вариант'}`:'Авторский пример';
+        content.appendChild(src);
+      }
+    }
+    btn.append(mark,content);
+    btn.addEventListener('click',()=>{if(checked)return;chosen.has(item.id)?chosen.delete(item.id):chosen.add(item.id);render()});grid.appendChild(btn);
+  }
+  $('checkBtn').disabled=checked||chosen.size===0;$('clearBtn').disabled=checked||chosen.size===0;
+}
+function feedback(){
+  if(checked||chosen.size===0)return;
+  checked=true;const s=stats();s.attempts++;
+  const correctIds=new Set(slide.positives.map(x=>x.id));
+  const wrongChosen=deck.filter(x=>chosen.has(x.id)&&!correctIds.has(x.id));
+  const missed=slide.positives.filter(x=>!chosen.has(x.id));
+  const win=wrongChosen.length===0&&missed.length===0;
+  if(win&&!usedHint){s.independentWins++;const today=new Date().toLocaleDateString('sv-SE');if(!s.days.includes(today))s.days.push(today)}
+  persist();render();
+  const banner=$('resultBanner');banner.className='result-banner visible'+(win?'':' needs-work');banner.innerHTML='';
+  const head=document.createElement('span');head.textContent=win?`✓ Правильно! Выбраны все ${slide.positives.length} ${slide.positives.length%100>=11&&slide.positives.length%100<=14?"верных вариантов":slide.positives.length%10===1?"верный вариант":[2,3,4].includes(slide.positives.length%10)?"верных варианта":"верных вариантов"}. Ошибок нет.`:'Есть неточности — попробуй ещё один вариант.';
+  const note=document.createElement('span');note.className='detail';note.textContent=win?'Зелёные рамочки — твои правильные ответы. Остальные карточки оставлены без отметки.':`Верно выбрано: ${slide.positives.length-missed.length} из ${slide.positives.length}. Лишних: ${wrongChosen.length}. Пропущено: ${missed.length}. Ниже есть разбор.`;
+  banner.append(head,note);
+  const f=$('feedback');f.classList.add('visible');f.innerHTML='';
+  const title=document.createElement('h3');title.textContent=win?(usedHint?'Правильно, но с подсказкой':'Все правильные утверждения найдены!'):'Разбор ошибок';f.appendChild(title);
+  const lead=document.createElement('p');lead.textContent=win?(usedHint?'Повтори это правило ещё раз без подсказки.':'Ответ засчитан в самостоятельные повторения. Вернись к правилу в другой день.'):`Верно выбрано: ${slide.positives.filter(x=>chosen.has(x.id)).length} из ${slide.positives.length}. Лишних: ${wrongChosen.length}. Пропущено: ${missed.length}.`;f.appendChild(lead);
+  if(!win){const list=document.createElement('ul');wrongChosen.forEach(x=>{const li=document.createElement('li');li.textContent=`Лишний выбор — «${x.context||x.t}». ${x.e}`;list.appendChild(li)});missed.forEach(x=>{const li=document.createElement('li');li.textContent=`Пропущен верный вариант — «${x.context||x.t}». ${x.e}`;list.appendChild(li)});f.appendChild(list)}
+  banner.scrollIntoView({behavior:'smooth',block:'start'});
+}
+for(const s of SLIDES){const opt=document.createElement('option');opt.value=s.id;opt.textContent=`${SLIDES.indexOf(s)+1}. ${s.title}`;$('slideSelect').append(opt)}
+$('slideSelect').addEventListener('change',e=>switchSlide(e.target.value));
+$('prevBtn').addEventListener('click',()=>{const n=SLIDES.findIndex(s=>s.id===slide.id);if(n>0)switchSlide(SLIDES[n-1].id)});
+$('nextBtn').addEventListener('click',()=>{const n=SLIDES.findIndex(s=>s.id===slide.id);if(n<SLIDES.length-1)switchSlide(SLIDES[n+1].id)});
+$('checkBtn').addEventListener('click',feedback);
+$('clearBtn').addEventListener('click',()=>{if(checked)return;chosen.clear();render()});
+$('againBtn').addEventListener('click',newVariant);
+$('ruleBtn').addEventListener('click',()=>{const panel=$('rulePanel');const showing=panel.classList.toggle('visible');$('ruleBtn').textContent=showing?'Скрыть правило':'Правило';if(showing){if(!checked)usedHint=true;panel.scrollIntoView({behavior:'smooth',block:'nearest'})}});
+$('importBtn').addEventListener('click',()=>$('importFile').click());
+$('importFile').addEventListener('change',async event=>{
+  const file=event.target.files?.[0];if(!file)return;
+  try{
+    const loaded=JSON.parse(await file.text());
+    if(loaded.app!=='Узнай правило!')throw Error('Неверное приложение');
+    if(loaded.version===2&&loaded.progress?.slides){
+      for(const s of SLIDES)if(loaded.progress.slides[s.id])progress.slides[s.id]=sanitize(loaded.progress.slides[s.id]);
+    }else if(loaded.progress&&Array.isArray(loaded.progress.days)){
+      progress.slides['homogeneous-members']=sanitize(loaded.progress);
+    }else throw Error('Неверный формат');
+    persist();render();alert('Прогресс загружен. Результаты по слайдам сохранены отдельно.');
+  }catch(_){alert('Не удалось загрузить прогресс. Выбери резервный файл тренажёра.')}
+  event.target.value='';
+});
+$('exportBtn').addEventListener('click',()=>{
+  const blob=new Blob([JSON.stringify({app:'Узнай правило!',version:2,exportedAt:new Date().toISOString(),progress},null,2)],{type:'application/json;charset=utf-8'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='uznai_pravilo_progress_v2.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+newVariant();
+</script>
+</body>
+</html>
