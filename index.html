@@ -15,7 +15,8 @@ button{font:inherit;cursor:pointer}
 .brand h1{font-size:clamp(24px,3vw,32px);margin:0;line-height:1.15;color:#fdf1da}.brand small{display:block;color:#d8cce4;font-size:15px;margin-top:4px}
 .controls{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
 .btn{border:2px solid #6fdad1;border-radius:16px;background:#3a2c52;color:white;padding:12px 17px;font-weight:800;transition:transform .13s,background .13s;min-height:48px}
-.btn:hover:not(:disabled){transform:translateY(-2px);background:#463a5f}.btn:focus-visible,.choice:focus-visible{outline:4px solid var(--gold);outline-offset:4px}.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn:hover:not(:disabled){transform:translateY(-2px);background:#463a5f}
+.btn.reset-progress{border-color:#e9a99d;color:#ffe9e5}.btn:focus-visible,.choice:focus-visible{outline:4px solid var(--gold);outline-offset:4px}.btn:disabled{opacity:.45;cursor:not-allowed}
 .btn.primary{color:#1d2438;background:linear-gradient(140deg,#87f4df,#6adacb);border-color:#b5fff0}.btn.gold{color:#2b2331;background:var(--gold);border-color:#f9da99}.btn.ghost{border-color:#8d7ba3;background:transparent}
 .intro{background:linear-gradient(110deg,rgba(45,95,96,.38),rgba(71,49,91,.8));padding:25px 30px;border:1.5px solid #7a8a9f;border-radius:26px;box-shadow:0 12px 40px rgba(5,5,17,.18)}
 .eyebrow{font-size:15px;font-weight:800;letter-spacing:.07em;color:#ffcf7a;text-transform:uppercase}.question{font-size:clamp(23px,3.2vw,36px);line-height:1.25;margin:11px 0 14px;max-width:1040px}.instruction{font-size:17px;color:#e5ddf0;margin:0}.toolrow{display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;margin:20px 0 12px}.counter{color:#eadff8;font-size:17px;font-weight:700}.hint{color:#c6edec;font-size:15px}
@@ -30,7 +31,7 @@ button{font:inherit;cursor:pointer}
 .choice.missed{border-color:var(--gold);background:#55422d}.choice.missed .mark{border-color:var(--gold);color:var(--gold)}
 .choice .choice-copy{display:flex;flex-direction:column;gap:7px}
 .choice .emph-always{font-size:1.32em;font-weight:900;letter-spacing:.045em;color:#ffdf8a;text-shadow:0 1px 0 #231830;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}.choice .verdict{font-size:13px;line-height:1.2;letter-spacing:.03em;text-transform:uppercase;font-weight:900;color:#b8f5d9}.choice.wrong .verdict{color:#ffd0ce}.choice.missed .verdict{color:#ffe1a2}
-.result-banner{display:none;margin-top:16px;padding:15px 20px;border-radius:18px;border:2px solid var(--green);background:#204b42;color:#e7fff6;font-size:20px;font-weight:900;line-height:1.35;box-shadow:0 6px 0 rgba(10,10,20,.15)}.result-banner.visible{display:block}.result-banner.needs-work{background:#563b38;border-color:var(--gold);color:#fff1d3}.result-banner .detail{display:block;font-size:15px;font-weight:600;margin-top:5px;color:#f1f0e9}
+.storage-warning{color:#ffdbb0;font-weight:700;font-size:15px}.storage-warning[hidden]{display:none}.result-banner{display:none;margin-top:16px;padding:15px 20px;border-radius:18px;border:2px solid var(--green);background:#204b42;color:#e7fff6;font-size:20px;font-weight:900;line-height:1.35;box-shadow:0 6px 0 rgba(10,10,20,.15)}.result-banner.visible{display:block}.result-banner.needs-work{background:#563b38;border-color:var(--gold);color:#fff1d3}.result-banner .detail{display:block;font-size:15px;font-weight:600;margin-top:5px;color:#f1f0e9}
 .actions{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;margin:3px 0 13px}.actions .btn{min-width:180px}
 .feedback{display:none;margin-top:18px;border:2px solid #bca4de;border-radius:22px;padding:21px 24px;background:#322846}.feedback.visible{display:block}.feedback h3{font-size:24px;margin:0 0 8px}.feedback p{font-size:17px;line-height:1.5;margin:8px 0}.feedback ul{margin:12px 0 0;padding-left:23px}.feedback li{margin:10px 0;line-height:1.44}
 .rule{display:none;margin:20px 0;border:2px solid #efbf71;border-radius:22px;background:#312943;padding:20px 25px}.rule.visible{display:block}.rule h3{margin:0 0 10px;color:#ffdb93;font-size:23px}.rule p,.rule li{font-size:18px;line-height:1.5}.rule li{margin:5px 0}.rule .examples{border-left:4px solid #65e3d6;padding-left:16px;margin-top:16px;color:#d9fff5}
@@ -90,18 +91,18 @@ button{font:inherit;cursor:pointer}
 <div class="app">
   <header class="top">
     <div class="brand"><div class="symbol">?</div><div><h1>Узнай правило!</h1><small>Тренажёр повторения • ОГЭ / ЕГЭ</small></div></div>
-    <div class="controls"><button id="ruleBtn" class="btn" type="button">Правило</button><button id="exportBtn" class="btn ghost" type="button">Сохранить прогресс</button><button id="importBtn" class="btn ghost" type="button">Загрузить прогресс</button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
+    <div class="controls"><button id="ruleBtn" class="btn" type="button">Правило</button><button id="exportBtn" class="btn ghost" type="button">Сохранить прогресс</button><button id="importBtn" class="btn ghost" type="button">Загрузить прогресс</button><button id="resetBtn" class="btn ghost reset-progress" type="button">Сбросить прогресс</button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
   </header>
   <main>
     <nav class="slide-nav" aria-label="Переключение правил"><span class="nav-label">Выбери правило:</span><button id="prevBtn" class="btn ghost nav-btn" type="button" aria-label="Предыдущее правило">←</button><select id="slideSelect" aria-label="Выбрать слайд с правилом"></select><button id="nextBtn" class="btn ghost nav-btn" type="button" aria-label="Следующее правило">→</button></nav>
-    <section class="intro" aria-labelledby="question"><div id="index" class="eyebrow">Слайд 01 · Синтаксис</div><h2 id="question" class="question"></h2><p class="instruction">Нажми на все верные утверждения. Ложные оставь без отметки. Количество правильных ответов не сообщается.</p></section><div id="resultBanner" class="result-banner" role="status" aria-live="polite"></div>
+    <section class="intro" aria-labelledby="question"><div id="index" class="eyebrow">Слайд 01 · Синтаксис</div><h2 id="question" class="question"></h2><p class="instruction">Нажми на все верные утверждения. Ложные оставь без отметки. Количество правильных ответов не сообщается.</p></section><p id="storageWarning" class="storage-warning" hidden>Браузер запретил сохранение данных. Проверь настройки хранения сайта, иначе результаты могут пропасть после обновления.</p><div id="resultBanner" class="result-banner" role="status" aria-live="polite"></div>
     <div class="toolrow"><div id="count" class="counter" aria-live="polite">Выбрано: 0</div><div id="stat" class="hint"></div></div>
     <section id="cards" class="grid" aria-label="Утверждения для выбора"></section>
     <div class="actions"><button id="checkBtn" class="btn primary" type="button" disabled>Проверить ответы</button><button id="clearBtn" class="btn ghost" type="button">Снять выделение</button><button id="againBtn" class="btn gold" type="button">Новый вариант</button></div>
     <section id="feedback" class="feedback" aria-live="polite"></section>
     <section id="rulePanel" class="rule"></section>
   </main>
-  <footer class="foot"><span>Результаты хранятся в этом браузере. Кнопка «Сохранить прогресс» создаёт резервный файл.</span><span>Версия 18 • 7 слайдов · седьмой: СГС (проверен)</span></footer>
+  <footer class="foot"><span>Ответы и результаты автоматически сохраняются в этом браузере. «Сохранить прогресс» создаёт резервный файл для переноса на другое устройство.</span><span>Версия 19 • 7 слайдов · автосохранение</span></footer>
 </div>
 <script>
 'use strict';
@@ -2326,12 +2327,13 @@ const $=id=>document.getElementById(id);
 const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]]}return b};
 const blankStats=()=>({attempts:0,independentWins:0,days:[]});
 const sanitize=s=>({attempts:Math.max(0,Number(s?.attempts)||0),independentWins:Math.max(0,Number(s?.independentWins)||0),days:Array.isArray(s?.days)?[...new Set(s.days.filter(v=>typeof v==='string'))]:[]});
-let progress={version:2,lastSlideId:'homogeneous-members',slides:{}};
+let progress={version:2,lastSlideId:'homogeneous-members',slides:{},work:{}};
 try{
   const stored=JSON.parse(localStorage.getItem(storageKey)||'null');
   if(stored&&stored.slides){
     progress.lastSlideId=stored.lastSlideId||progress.lastSlideId;
     for(const s of SLIDES)if(stored.slides[s.id])progress.slides[s.id]=sanitize(stored.slides[s.id]);
+    if(stored.work&&typeof stored.work==='object')progress.work=stored.work;
   }else{
     const legacy=JSON.parse(localStorage.getItem(legacyKey)||'null');
     if(legacy&&typeof legacy==='object')progress.slides['homogeneous-members']=sanitize(legacy);
@@ -2373,7 +2375,19 @@ function highlightContext(sentence,words,item){
 let slide=SLIDES.find(s=>s.id===progress.lastSlideId)||SLIDES[0];
 let deck=[],chosen=new Set(),checked=false,usedHint=false;
 function stats(){return progress.slides[slide.id]||(progress.slides[slide.id]=blankStats())}
-function persist(){progress.lastSlideId=slide.id;try{localStorage.setItem(storageKey,JSON.stringify(progress))}catch(_){}}
+// The snapshot contains the displayed card order, the student's selections and the check state.
+// This is distinct from the cumulative counters saved by older versions of the trainer.
+function persist(){
+  progress.lastSlideId=slide.id;
+  progress.work[slide.id]={
+    ids:deck.map(item=>item.id),
+    chosen:[...chosen],
+    checked,
+    usedHint
+  };
+  try{localStorage.setItem(storageKey,JSON.stringify(progress))}
+  catch(_){$('storageWarning').hidden=false}
+}
 function statText(){const s=stats(),d=s.days.length;return `Попыток: ${s.attempts} • Верно без подсказки: ${s.independentWins} • Дней с верным ответом: ${d}/3${d>=3?' ✓':''}`}
 function renderNav(){
   const ix=SLIDES.findIndex(s=>s.id===slide.id);
@@ -2382,6 +2396,12 @@ function renderNav(){
   $('index').textContent=`Слайд ${String(ix+1).padStart(2,'0')} из ${SLIDES.length} · Синтаксис`;
 }
 const PRACTICE_SLIDES=new Set(['case-traps','indivisible-bases','homogeneous-bases','nominal-predicate','verbal-predicate']);
+function clearFeedbackPanels(){
+  $('rulePanel').classList.remove('visible');$('ruleBtn').textContent='Правило';
+  $('feedback').className='feedback';$('feedback').innerHTML='';
+  $('resultBanner').className='result-banner';$('resultBanner').textContent='';
+  $('rulePanel').innerHTML=RULES[slide.id];
+}
 function newVariant(){
   if(PRACTICE_SLIDES.has(slide.id)){
     deck=shuffle([...slide.positives,...slide.negatives]);
@@ -2392,15 +2412,28 @@ function newVariant(){
     deck=shuffle([...slide.positives,...pinned,...rotating]);
   }
   chosen=new Set();checked=false;usedHint=false;
-  $('rulePanel').classList.remove('visible');$('ruleBtn').textContent='Правило';
-  $('feedback').className='feedback';$('feedback').innerHTML='';
-  $('resultBanner').className='result-banner';$('resultBanner').textContent='';
-  $('rulePanel').innerHTML=RULES[slide.id];
-  render();
+  clearFeedbackPanels();
+  persist();render();
+}
+function restoreSlide(){
+  const saved=progress.work?.[slide.id];
+  const all=[...slide.positives,...slide.negatives];
+  const byId=new Map(all.map(item=>[item.id,item]));
+  const ids=saved?.ids;
+  // If card identifiers changed in a future version, start this slide fresh.
+  if(!Array.isArray(ids)||!ids.length||!ids.every(id=>typeof id==='string'&&byId.has(id))||new Set(ids).size!==ids.length||slide.positives.some(item=>!ids.includes(item.id))){
+    newVariant();return;
+  }
+  deck=ids.map(id=>byId.get(id));
+  chosen=new Set(Array.isArray(saved.chosen)?saved.chosen.filter(id=>ids.includes(id)):[]);
+  checked=saved.checked===true;usedHint=saved.usedHint===true;
+  clearFeedbackPanels();render();
+  if(checked)showFeedback(false);
 }
 function switchSlide(id){
   const next=SLIDES.find(s=>s.id===id);if(!next)return;
-  slide=next;persist();newVariant();
+  // Every slide has its own saved state; changing slides must never reset it.
+  slide=next;restoreSlide();persist();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function makeStatement(item){
@@ -2434,19 +2467,19 @@ function render(){
       }
     }
     btn.append(mark,content);
-    btn.addEventListener('click',()=>{if(checked)return;chosen.has(item.id)?chosen.delete(item.id):chosen.add(item.id);render()});grid.appendChild(btn);
+    btn.addEventListener('click',()=>{if(checked)return;chosen.has(item.id)?chosen.delete(item.id):chosen.add(item.id);persist();render()});grid.appendChild(btn);
   }
   $('checkBtn').disabled=checked||chosen.size===0;$('clearBtn').disabled=checked||chosen.size===0;
 }
-function feedback(){
-  if(checked||chosen.size===0)return;
-  checked=true;const s=stats();s.attempts++;
+function resultDetails(){
   const correctIds=new Set(slide.positives.map(x=>x.id));
   const wrongChosen=deck.filter(x=>chosen.has(x.id)&&!correctIds.has(x.id));
   const missed=slide.positives.filter(x=>!chosen.has(x.id));
-  const win=wrongChosen.length===0&&missed.length===0;
-  if(win&&!usedHint){s.independentWins++;const today=new Date().toLocaleDateString('sv-SE');if(!s.days.includes(today))s.days.push(today)}
-  persist();render();
+  return {wrongChosen,missed,win:wrongChosen.length===0&&missed.length===0};
+}
+// Recreate the same visible feedback after reload, WITHOUT counting the attempt again.
+function showFeedback(scrollToResult=true){
+  const {wrongChosen,missed,win}=resultDetails();
   const banner=$('resultBanner');banner.className='result-banner visible'+(win?'':' needs-work');banner.innerHTML='';
   const head=document.createElement('span');head.textContent=win?`✓ Правильно! Выбраны все ${slide.positives.length} ${slide.positives.length%100>=11&&slide.positives.length%100<=14?"верных вариантов":slide.positives.length%10===1?"верный вариант":[2,3,4].includes(slide.positives.length%10)?"верных варианта":"верных вариантов"}. Ошибок нет.`:'Есть неточности — попробуй ещё один вариант.';
   const note=document.createElement('span');note.className='detail';note.textContent=win?'Зелёные рамочки — твои правильные ответы. Остальные карточки оставлены без отметки.':`Верно выбрано: ${slide.positives.length-missed.length} из ${slide.positives.length}. Лишних: ${wrongChosen.length}. Пропущено: ${missed.length}. Ниже есть разбор.`;
@@ -2455,16 +2488,23 @@ function feedback(){
   const title=document.createElement('h3');title.textContent=win?(usedHint?'Правильно, но с подсказкой':'Все правильные утверждения найдены!'):'Разбор ошибок';f.appendChild(title);
   const lead=document.createElement('p');lead.textContent=win?(usedHint?'Повтори это правило ещё раз без подсказки.':'Ответ засчитан в самостоятельные повторения. Вернись к правилу в другой день.'):`Верно выбрано: ${slide.positives.filter(x=>chosen.has(x.id)).length} из ${slide.positives.length}. Лишних: ${wrongChosen.length}. Пропущено: ${missed.length}.`;f.appendChild(lead);
   if(!win){const list=document.createElement('ul');wrongChosen.forEach(x=>{const li=document.createElement('li');li.textContent=`Лишний выбор — «${x.context||x.t}». ${x.e}`;list.appendChild(li)});missed.forEach(x=>{const li=document.createElement('li');li.textContent=`Пропущен верный вариант — «${x.context||x.t}». ${x.e}`;list.appendChild(li)});f.appendChild(list)}
-  banner.scrollIntoView({behavior:'smooth',block:'start'});
+  if(scrollToResult)banner.scrollIntoView({behavior:'smooth',block:'start'});
+}
+function feedback(){
+  if(checked||chosen.size===0)return;
+  checked=true;const s=stats();s.attempts++;
+  const {win}=resultDetails();
+  if(win&&!usedHint){s.independentWins++;const today=new Date().toLocaleDateString('sv-SE');if(!s.days.includes(today))s.days.push(today)}
+  persist();render();showFeedback();
 }
 for(const s of SLIDES){const opt=document.createElement('option');opt.value=s.id;opt.textContent=`${SLIDES.indexOf(s)+1}. ${s.title}`;$('slideSelect').append(opt)}
 $('slideSelect').addEventListener('change',e=>switchSlide(e.target.value));
 $('prevBtn').addEventListener('click',()=>{const n=SLIDES.findIndex(s=>s.id===slide.id);if(n>0)switchSlide(SLIDES[n-1].id)});
 $('nextBtn').addEventListener('click',()=>{const n=SLIDES.findIndex(s=>s.id===slide.id);if(n<SLIDES.length-1)switchSlide(SLIDES[n+1].id)});
 $('checkBtn').addEventListener('click',feedback);
-$('clearBtn').addEventListener('click',()=>{if(checked)return;chosen.clear();render()});
+$('clearBtn').addEventListener('click',()=>{if(checked)return;chosen.clear();persist();render()});
 $('againBtn').addEventListener('click',newVariant);
-$('ruleBtn').addEventListener('click',()=>{const panel=$('rulePanel');const showing=panel.classList.toggle('visible');$('ruleBtn').textContent=showing?'Скрыть правило':'Правило';if(showing){if(!checked)usedHint=true;panel.scrollIntoView({behavior:'smooth',block:'nearest'})}});
+$('ruleBtn').addEventListener('click',()=>{const panel=$('rulePanel');const showing=panel.classList.toggle('visible');$('ruleBtn').textContent=showing?'Скрыть правило':'Правило';if(showing){if(!checked){usedHint=true;persist()}panel.scrollIntoView({behavior:'smooth',block:'nearest'})}});
 $('importBtn').addEventListener('click',()=>$('importFile').click());
 $('importFile').addEventListener('change',async event=>{
   const file=event.target.files?.[0];if(!file)return;
@@ -2472,19 +2512,32 @@ $('importFile').addEventListener('change',async event=>{
     const loaded=JSON.parse(await file.text());
     if(loaded.app!=='Узнай правило!')throw Error('Неверное приложение');
     if(loaded.version===2&&loaded.progress?.slides){
+      progress.slides={};
       for(const s of SLIDES)if(loaded.progress.slides[s.id])progress.slides[s.id]=sanitize(loaded.progress.slides[s.id]);
+      progress.work=loaded.progress.work&&typeof loaded.progress.work==='object'?loaded.progress.work:{};
+      const requestedId=loaded.progress.lastSlideId;
+      slide=SLIDES.find(s=>s.id===requestedId)||SLIDES[0];
     }else if(loaded.progress&&Array.isArray(loaded.progress.days)){
-      progress.slides['homogeneous-members']=sanitize(loaded.progress);
+      progress.slides={'homogeneous-members':sanitize(loaded.progress)};
+      progress.work={};slide=SLIDES[0];
     }else throw Error('Неверный формат');
-    persist();render();alert('Прогресс загружен. Результаты по слайдам сохранены отдельно.');
+    restoreSlide();persist();alert('Прогресс загружен: ответы и результаты по слайдам восстановлены.');
   }catch(_){alert('Не удалось загрузить прогресс. Выбери резервный файл тренажёра.')}
   event.target.value='';
 });
 $('exportBtn').addEventListener('click',()=>{
+  persist();
   const blob=new Blob([JSON.stringify({app:'Узнай правило!',version:2,exportedAt:new Date().toISOString(),progress},null,2)],{type:'application/json;charset=utf-8'});
   const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='uznai_pravilo_progress_v2.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);
 });
-newVariant();
+$('resetBtn').addEventListener('click',()=>{
+  if(!confirm(`Сбросить ответы и результаты на всех ${SLIDES.length} слайдах? Это действие нельзя отменить.`))return;
+  progress={version:2,lastSlideId:SLIDES[0].id,slides:{},work:{}};
+  try{localStorage.removeItem(storageKey);localStorage.removeItem(legacyKey)}catch(_){}
+  slide=SLIDES[0];newVariant();
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+restoreSlide();
 </script>
 </body>
 </html>
